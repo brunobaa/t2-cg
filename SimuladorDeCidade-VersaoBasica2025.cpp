@@ -28,7 +28,7 @@ using namespace std;
 #endif
 
 #ifdef __linux__
-#include <glut.h>
+#include <GL/glut.h>
 #endif
 
 #include "Temporizador.h"
@@ -84,7 +84,38 @@ public:
 
 // Matriz que armazena informacoes sobre o que existe na cidade
 Elemento Cidade[100][100];
-
+int textureMap[30][30] = {
+{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
+{4,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	3,	3,	5,	5,	5,	5,	5,	5,	3,	5,	5,	5,	5,	5,	5,	5},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	4,	5,	5,	5,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	7,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{9,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	1,	1,	5,	5,	5,	5,	5,	5,	1,	5,	5,	5,	5,	5,	5,	5},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{9,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	1,	1,	5,	5,	5,	5,	5,	5,	1,	5,	5,	5,	5,	5,	5,	5},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{7,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	0,	0,	0,	0,	0,	0,	7,	0,	0,	0,	0,	0,	0,	0},
+{12,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	11,	11,	5,	5,	5,	5,	5,	5,	11,	5,	5,	5,	5,	5,	5,	5}
+};
 
 Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo;
 
@@ -110,17 +141,16 @@ void ImprimeCidade() {
 // **********************************************************************
 void InicializaCidade(int QtdX, int QtdZ)
 {
-    for (int i=0;i<QtdZ;i++)
+    for (int i=0;i<QtdZ;i++) {
         for (int j=0;j<QtdX;j++)
         {
             // a cor do piso vai depender do mapa. Aqui, eh aletoria.
             Cidade[i][j].corDoPiso = rand()%40;
             Cidade[i][j].corDoObjeto = White;
             Cidade[i][j].tipo = VAZIO;
+            Cidade[i][j].textureID = textureMap[i][j];
         }
-    //Cidade[9][19].corDoPiso = Black;
-    //ImprimeCidade();
-    
+    }
 }
 
 // **********************************************************************
@@ -134,6 +164,21 @@ void PosicionaEmTerceiraPessoa()
     Observador = TerceiraPessoa;   // Posicao do Observador
     Alvo = PosicaoVeiculo;         // Posicao do Alvo
     //Alvo.imprime("Posiciona - Veiculo:");
+}
+
+void InicializaTexturas() {
+    LoadTexture ("None.png");
+    LoadTexture ("CROSS.png");
+    LoadTexture ("DL.png");
+    LoadTexture ("DLR.png");
+    LoadTexture ("DR.png");
+    LoadTexture ("LR.png");
+    LoadTexture ("UD.png");
+    LoadTexture ("UDL.png");
+    LoadTexture ("UDR.png");
+    LoadTexture ("UL.png");
+    LoadTexture ("ULR.png");
+    LoadTexture ("UR.png");
 }
 
 // **********************************************************************
@@ -161,9 +206,9 @@ void init(void)
     
     // Quantidade de retangulos do piso vai depender do
     // mapa que sera' lido da
-    QtdX = 5;
-    QtdZ = 5;
-    
+    QtdX = 30;
+    QtdZ = 30;
+    InicializaTexturas();
     InicializaCidade(QtdX, QtdZ);
     
     // Define a posicao do observador e do veiculo
@@ -175,9 +220,6 @@ void init(void)
     glDisable(GL_TEXTURE_2D);
     
     AnguloDeVisao = 45;
-    
-    LoadTexture ("bricks.jpg"); // esta serah a textura 0
-    LoadTexture ("Piso.jpg"); // esta serah a textura 1
     UseTexture (-1); // desabilita o uso de textura, inicialmente
     
 }
@@ -249,7 +291,7 @@ void DesenhaPoligonosComTextura()
     glPushMatrix();
     glTranslatef(QtdX*0.2,1, QtdZ*0.8);
     glRotatef(angulo,1,0,0);
-    DesenhaLadrilhoTEX(0);
+    DesenhaLadrilhoTEX(1);
     glPopMatrix();
 
     glPushMatrix();
@@ -258,6 +300,12 @@ void DesenhaPoligonosComTextura()
     DesenhaLadrilhoTEX(1);
     glPopMatrix();
 
+
+    glPushMatrix();
+    glTranslatef(QtdX*1,2,QtdZ*0.8);
+    glRotatef(45,1,0,0);
+    DesenhaLadrilhoTEX(1);
+    glPopMatrix();
 }
 
 // **********************************************************************
@@ -298,15 +346,14 @@ void DesenhaLadrilho(int corBorda, int corDentro)
 // **********************************************************************
 void DesenhaCidade(int QtdX, int QtdZ)
 {
-    srand(100); // usa uma semente fixa para gerar sempre as mesma cores no piso
     glPushMatrix();
-
+    defineCor(White);
     for(int x=0; x<QtdX;x++)
     {
         glPushMatrix();
         for(int z=0; z<QtdZ;z++)
         {
-            DesenhaLadrilho(Yellow, Cidade[z][x].corDoPiso);
+            DesenhaLadrilhoTEX(Cidade[x][z].textureID);
             glTranslated(0, 0, 1);
         }
         // Aqui, os predios devem ser desenhados
