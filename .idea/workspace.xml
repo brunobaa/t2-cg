@@ -17,7 +17,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0da606a9-1ca0-4f57-9bec-9b786350d2d6" name="Changes" comment="" />
+    <list default="true" id="0da606a9-1ca0-4f57-9bec-9b786350d2d6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BasicoOpenGL" beforeDir="false" afterPath="$PROJECT_DIR$/BasicoOpenGL" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.o" beforeDir="false" afterPath="$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.o" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -53,29 +58,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;C/C++ File.SimuladorDeCidade-VersaoBasica2025.cpp.executor&quot;: &quot;Debug&quot;,
-    &quot;Makefile Target.all.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;henrique/criacao-piso&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/mentat-henrik/Documentos/GitHub/t2-cg&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "C/C++ File.SimuladorDeCidade-VersaoBasica2025.cpp.executor": "Debug",
+    "Makefile Target.all.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "henrique/desenho-predios",
+    "last_opened_file_path": "/home/mentat-henrik/Documentos/GitHub/t2-cg",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -110,6 +115,7 @@
       <workItem from="1749322857110" duration="625000" />
       <workItem from="1749323522507" duration="4787000" />
       <workItem from="1749331479360" duration="9739000" />
+      <workItem from="1749425351746" duration="2261000" />
     </task>
     <servers />
   </component>
@@ -121,7 +127,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.cpp</url>
-          <line>571</line>
+          <line>577</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
