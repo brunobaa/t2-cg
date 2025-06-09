@@ -81,30 +81,31 @@ public:
 #define RUA 20
 #define COMBUSTIVEL 30
 #define VEICULO 40
+#define CALCADA 50
 
 // Matriz que armazena informacoes sobre o que existe na cidade
-Elemento Cidade[100][100];
+Elemento Cidade[30][30];
 int textureMap[30][30] = {
     //	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0,	0,	0,	0,	0,	0,	0, 0,
 {0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0,   0,  0,	0,  0,	0,	0,	0,	0,	0,  0,	0},
 {4,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	11},
 {5,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,  0,	0,	0,	0,	0,	0,	0, 0,	5},
-{5,	0,	12, 12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	0,	5},
+{5,	0,	12, -1,	12,	12,	12,	12,	12,	-1,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	0,	5},
 {5,	12,	12,	12,	-5,	12,	12,	-5,	12,	12,	-5, -5,	12,	12,	12,	12,	-5,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	5},
 {1,	6,	6,	6,	6,	6,	6,	8,	6,	6,	6,	6,	8,	6,	6,	6,	6,	8,	8,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	10},
 {5,	12,	-5,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	5,	12,	12,	12,	12,	12,	12, 12,	12,	12,	12,	5},
 {5,	12,	12,	12,	12,	12,	-5,	5,	12,	-5,	-5,	-5,	5,	12,	12,	-5,	12,	5,  5,	12,	12,	-5,	12,	12,	-5, 12,	-5,	12,	12,	5},
-{5,	12,	12,	-5,	12,	12,	12,	5,	12,	12,	12,	12,	5,	12,	12,	12,	-5,	5,	5,	12,	-5,	12,	12,	12,	12, 12,	12,	12,	12,	5},
+{5,	12,	12,	-5,	12,	12,	12,	5,	12,	12,	12,	12,	5,	12,	-1,	12,	-5,	5,	5,	12,	-5,	12,	12,	12,	12, -1,	12,	12,	12,	5},
 {5,	12,	12,	12,	12,	12,	-5,	5,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	5,	12,	12,	-5,	12,	12,	12, 12,	12,	-5,	12,	5},
 {5,	12,	-5,	12,	12,	12,	12,	2,	6,	6,	6,	6,	9,	12,	12,	12,	12,	5,	5,	12,	12,	12,	 4, 6,  6, 11,	12,	12,	12,	5},
-{5,	12,	12,	12,	-5,	12,	-5,	12,	12,	12,	12,	12,	12,	12,	12,	-5,	12,	5,	5,	12,	12,	-5,  5,	12,	12, 5,	12,	-5,	12,	5},
-{5,	-5,	12,	-5,	12,	-5,	12,	12,	12,	12,	-5,	12,	12,	12,	12,	12,	12,	5,	5,	12,	-5,	12,	 5,	12,	12, 5,	12,	12,	12,	5},
+{5,	12,	-1,	12,	-5,	12,	-5,	12,	12,	12,	12,	12,	12,	12,	12,	-5,	12,	5,	5,	12,	12,	-5,  5,	12,	12, 5,	12,	-5,	12,	5},
+{5,	-5,	12,	-5,	12,	-5,	12,	12,	12,	12,	-5,	12,	12,	-1,	12,	12,	12,	5,	5,	12,	-5,	12,	 5,	12,	12, 5,	12,	12,	12,	5},
 {5,	12,	12,	12,	12,	12,	-5,	12,	-5,	12,	12,	12,	12,	12,	12,	-5,	12,	5,	5,	12,	12,	-5,	 5,	12,	12, 5,	12,	12,	12,	5},
 {5,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	5,	5,	12,	12,	12,	 5,	12,	12, 5,	12,	12,	12,	5},
 {1, 6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	7,	7,	6,	6,	6,	7,	6,	6,	7,	6,	6,	6,	10},
 {1,	6,	6,	6,	6,	6,	6,	8,	6,	6,	6,	6,	6,	8,	6,	6,	6,	6,	6,	8,	6,	6,	6,	6,	8,	8,	6,	6,	6,	10},
-{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	5,	12,	-5, 12,	5},
-{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	-5,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	-5,	-5,	12,	5,	5,	12,	12,	12,	5},
+{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	-1,	12,	5,	5,	12,	-5, 12,	5},
+{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	-5,	12,	12,	5,	12,	-1,	12,	12,	-1,	5,	12,	-5,	-5,	12,	5,	5,	12,	12,	12,	5},
 {5,	12,	12,	-5,	12,	12,	12,	5,	-5,	12,	12,	12,	-5,	5,	12,	-5,	12,	12,	12,	5,	12,	12,	-5,	12,	5,	5,	-5,	12,	-5,	5},
 {5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	-5,	12,	12,	5,	12,	12,	12,	-5,	12,	5,	12,	-5,	12,	12,	5,	5,	12,	-5,	12,	5},
 {5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	5,	12,	12,	-5,	5},
@@ -112,7 +113,7 @@ int textureMap[30][30] = {
 {5,	12,	12,	12,	12,	-5,	12,	5,	12,	-5,	12,	12, 12,	5,	12,	12,	12, 12,	12,	5,	12,12 ,	12,	12,	5,	5,	12,	12,	12,	5},
 {5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12, 12,	5,	-5,	12,	12, 12,	-5,	5,	12,	-5,	12,	12,	5,	5,	12,	12,	12,	5},
 {5,	12,	-5,	12,	12,	-5,	12,	5,	12,	12,	12,	12, 12,	5,	12,	12,	12, -5,	12,	5,	12,	12,	12,	12,	5,	5,	12,	12,	12,	5},
-{5,	0,	12,	12,	12,	12,	12,	5,	12,	12,	-5,	12, 12,	5,	12,	-5,	12, 12,	-5,	5,	12,	12,	12,	12,	5,	5,	12,	12,	0,	5},
+{5,	0,	12,	12,	-1,	12,	12,	5,	12,	12,	-5,	12, 12,	5,	12,	-5,	12, 12,	-5,	5,	12,	12,	12,	12,	5,	5,	12,	12,	0,	5},
 {5,	0,	0,	0,	0,	0,	0,	5,	0,	0,	0,	0,	0,	5,	0,	0,	0,	0,	0,	5,	0, 0,	0,	0,	5,	5,	0,	0, 0,	5},
 {2,	6,	6,	6,	6,	6,	6,	7,	6,	6,	6,	6,	6,	7,	6,	6,	6,	6,	6,	7,	6,	6,	6,	6,	7,	7,	6,	6,	6,	9},
 {0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0,	0,	0,	0,	0,	0,	0, 0,	0},
@@ -145,11 +146,25 @@ void InicializaCidade(int QtdX, int QtdZ)
     for (int i=0;i<QtdZ;i++) {
         for (int j=0;j<QtdX;j++)
         {
-            // a cor do piso vai depender do mapa. Aqui, eh aletoria.
-            Cidade[i][j].corDoPiso = rand()%40;
-            Cidade[i][j].corDoObjeto = White;
-            Cidade[i][j].tipo = VAZIO;
-            Cidade[i][j].textureID = textureMap[i][j];
+            if (textureMap[i][j] == -5) {
+                Cidade[i][j].tipo = PREDIO;
+                Cidade[i][j].corDoObjeto = i * 5;
+            } else if (textureMap[i][j] == -1) {
+                Cidade[i][j].tipo = COMBUSTIVEL;
+                Cidade[i][j].corDoObjeto = Green;
+            } else if (textureMap[i][j] == 12) {
+                Cidade[i][j].tipo = CALCADA;
+                Cidade[i][j].corDoObjeto = White;
+            } else if (textureMap[i][j] == VAZIO) {
+                Cidade[i][j].corDoObjeto = White;
+                Cidade[i][j].textureID = textureMap[i][j];
+                Cidade[i][j].tipo = VAZIO;
+            } else {
+                Cidade[i][j].corDoPiso = rand()%40;
+                Cidade[i][j].corDoObjeto = White;
+                Cidade[i][j].textureID = textureMap[i][j];
+                Cidade[i][j].tipo = RUA;
+            }
         }
     }
 }
@@ -255,14 +270,14 @@ void animate()
 // **********************************************************************
 //  Desenha um predio no meio de uma c�lula
 // **********************************************************************
-void DesenhaPredio(float altura)
+void DesenhaPredio(float altura, int cor)
 {
+    defineCor(cor);
     glPushMatrix();
-       // glTranslatef(0, -1, 0);
         glScalef(0.2, altura, 0.2);
         glutSolidCube(1);
     glPopMatrix();
-    
+    defineCor(White);
 }
 // **********************************************************************
 // void DesenhaLadrilhoTex(int idTextura)
@@ -283,30 +298,6 @@ void DesenhaLadrilhoTEX(int idTextura)
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
-}
-// **********************************************************************
-// void DesenhaPoligonosComTextura()
-// **********************************************************************
-void DesenhaPoligonosComTextura()
-{
-    glPushMatrix();
-    glTranslatef(QtdX*0.2,1, QtdZ*0.8);
-    glRotatef(angulo,1,0,0);
-    DesenhaLadrilhoTEX(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(QtdX*0.6,1,QtdZ*0.8);
-    glRotatef(45,1,0,0);
-    DesenhaLadrilhoTEX(1);
-    glPopMatrix();
-
-
-    glPushMatrix();
-    glTranslatef(QtdX*1,2,QtdZ*0.8);
-    glRotatef(45,1,0,0);
-    DesenhaLadrilhoTEX(1);
-    glPopMatrix();
 }
 
 // **********************************************************************
@@ -341,26 +332,35 @@ void DesenhaLadrilho(int corBorda, int corDentro)
         glVertex3f( 0.5f,  0.01f, -0.5f);
     glEnd();
 }
+
+void desenhaGasolina() {
+    DesenhaPredio(2, Green); // por ser o msm objeto apenas abstraimos
+}
+
 // **********************************************************************
 //
 //
 // **********************************************************************
-void DesenhaCidade(int QtdX, int QtdZ)
-{
+void DesenhaCidade(int QtdX, int QtdZ){
     glPushMatrix();
     defineCor(White);
+    int p =0;
     for(int x=0; x<QtdX;x++)
     {
         glPushMatrix();
         for(int z=0; z<QtdZ;z++)
         {
-            if (Cidade[x][z].textureID == -5) {
-                DesenhaPredio(5);
-                DesenhaLadrilhoTEX(12); // coloca o chão como ladrilho
-            } else {
-                DesenhaLadrilhoTEX(Cidade[x][z].textureID);
+            if (Cidade[x][z].tipo == PREDIO) {
+                if (p == 5) p = 0;
+                DesenhaPredio(z * 1.2, Cidade[x][z].corDoObjeto);
+                DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+            } else if (Cidade[x][z].tipo == COMBUSTIVEL) {
+                desenhaGasolina();
+                DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+            } else if (Cidade[x][z].tipo == CALCADA) {
+                DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
             }
-
+            DesenhaLadrilhoTEX(Cidade[x][z].textureID);
 
             glTranslated(0, 0, 1);
         }
@@ -553,7 +553,6 @@ void display( void )
     DesenhaCidade(QtdX,QtdZ);
     
     glPushMatrix();
-    DesenhaPoligonosComTextura();
     glPopMatrix();
 
     DesenhaEm2D();

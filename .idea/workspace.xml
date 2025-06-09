@@ -115,7 +115,7 @@
       <workItem from="1749322857110" duration="625000" />
       <workItem from="1749323522507" duration="4787000" />
       <workItem from="1749331479360" duration="9739000" />
-      <workItem from="1749425351746" duration="2261000" />
+      <workItem from="1749425351746" duration="7598000" />
     </task>
     <servers />
   </component>
@@ -127,7 +127,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.cpp</url>
-          <line>577</line>
+          <line>574</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
