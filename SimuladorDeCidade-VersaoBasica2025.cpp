@@ -230,7 +230,7 @@ void init(void)
     
     // Define a posicao do observador e do veiculo
     // com base no tamanho do mapa
-    TerceiraPessoa = Ponto(QtdX/2, 24, QtdZ*1.6);
+    TerceiraPessoa = Ponto(QtdX/2, 5, QtdZ * 2);
     PosicaoVeiculo = Ponto(QtdX/2, 0, QtdZ/2);
     
     PosicionaEmTerceiraPessoa();
@@ -596,7 +596,7 @@ void keyboard ( unsigned char key, int x, int y )
         break;
     case 'd':
         Observador.x++;
-        Alvo.z++;
+        Alvo.x++;
         break;
     case 't':
         ComTextura = !ComTextura;

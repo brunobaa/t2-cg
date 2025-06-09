@@ -18,9 +18,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0da606a9-1ca0-4f57-9bec-9b786350d2d6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BasicoOpenGL" beforeDir="false" afterPath="$PROJECT_DIR$/BasicoOpenGL" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProgramaDeModelagem3D.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ProgramaDeModelagem3D.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.o" beforeDir="false" afterPath="$PROJECT_DIR$/SimuladorDeCidade-VersaoBasica2025.o" afterDir="false" />
     </list>
