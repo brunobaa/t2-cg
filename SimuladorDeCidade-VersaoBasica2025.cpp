@@ -582,6 +582,22 @@ void keyboard ( unsigned char key, int x, int y )
         init();
         glutPostRedisplay();
         break;
+    case 'a':
+        Observador.x--;
+        Alvo.x--;
+        break;
+    case 'w':
+        Observador.z--;
+        Alvo.z--;
+        break;
+    case 's':
+        Observador.z++;
+        Alvo.z++;
+        break;
+    case 'd':
+        Observador.x++;
+        Alvo.z++;
+        break;
     case 't':
         ComTextura = !ComTextura;
         break;
