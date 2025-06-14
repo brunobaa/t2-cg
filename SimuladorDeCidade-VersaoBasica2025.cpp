@@ -274,11 +274,17 @@ void DesenhaPredio(float altura, int cor)
 {
     defineCor(cor);
     glPushMatrix();
-        glScalef(0.2, altura, 0.2);
+        // Translada para cima metade da altura (para alinhar a base com o chão)
+        glTranslatef(0.0f, altura / 2.0f, 0.0f);
+
+        // Escala para altura desejada
+        glScalef(0.2f, altura, 0.2f);
+
         glutSolidCube(1);
     glPopMatrix();
     defineCor(White);
 }
+
 // **********************************************************************
 // void DesenhaLadrilhoTex(int idTextura)
 // **********************************************************************
