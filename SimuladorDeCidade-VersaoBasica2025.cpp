@@ -272,14 +272,15 @@ void animate()
 // **********************************************************************
 void DesenhaPredio(float altura, int cor)
 {
+    float fator = 0.5f;            // 50% da altura original
+    float h = altura * fator;      
+
     defineCor(cor);
     glPushMatrix();
-        // Translada para cima metade da altura (para alinhar a base com o chão)
-        glTranslatef(0.0f, altura / 2.0f, 0.0f);
-
-        // Escala para altura desejada
-        glScalef(0.2f, altura, 0.2f);
-
+        // sobe metade de “h” para alinhar a base em y=0
+        glTranslatef(0.0f, h/2.0f, 0.0f);
+        // escala X,Z fixo; Y = h (já com o fator)
+        glScalef(0.2f, h, 0.2f);
         glutSolidCube(1);
     glPopMatrix();
     defineCor(White);
@@ -358,7 +359,9 @@ void DesenhaCidade(int QtdX, int QtdZ){
         {
             if (Cidade[x][z].tipo == PREDIO) {
                 if (p == 5) p = 0;
-                DesenhaPredio(z * 1.2, Cidade[x][z].corDoObjeto);
+                //caso queria que os predios voltem ao tamnho grande troque as duas funções
+                DesenhaPredio((z * 1.2f) * 0.5f, Cidade[x][z].corDoObjeto);
+                //DesenhaPredio(z * 1.2, Cidade[x][z].corDoObjeto);
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
             } else if (Cidade[x][z].tipo == COMBUSTIVEL) {
                 desenhaGasolina();
