@@ -64,6 +64,9 @@ double TempoTotal=0;
 // Qtd de ladrilhos do piso. Inicialzada na INIT
 int QtdX;
 int QtdZ;
+int direcao = -1; //se esta para frente ou para tras/ para direita ou esquerda
+bool percorrendoEmZ = true;
+bool percorrer = false;
 
 
 // Representa o conteudo de uma celula do piso
@@ -120,7 +123,8 @@ int textureMap[30][30] = {
 {0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0,	0,	0,	0,	0,	0,	0, 0,	0},
 };
 
-Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo, posicaoCarro;
+Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo;
+Ponto posicaoCarro = Ponto(15,0,-15);
 
 bool ComTextura = true;
 
@@ -269,9 +273,20 @@ void animate()
     }
 }
 
-void DesenhaCarro(Ponto posicaoCarro) {
-
+void posicionaCarro() {
     glTranslated(posicaoCarro.x, posicaoCarro.y, posicaoCarro.z);
+    if (!percorrer) return;
+
+    if (percorrendoEmZ) {
+        posicaoCarro.z+= 0.5 * direcao;
+    } else {
+        posicaoCarro.x+= 0.5 * direcao;
+    }
+}
+
+void DesenhaCarro() {
+
+    posicionaCarro();
     glRotatef(anguloCarro,0.0,1.0,0.0);
     glPushMatrix();
         defineCor(Black);
@@ -433,7 +448,7 @@ void DesenhaCidade(int QtdX, int QtdZ){
         glTranslated(1, 0, 0);
     }
 
-    DesenhaCarro(posicaoCarro);
+    DesenhaCarro();
 
     glPopMatrix();
 }
@@ -638,7 +653,10 @@ void keyboard ( unsigned char key, int x, int y )
 	{
     case 27:        // Termina o programa qdo
       exit ( 0 );   // a tecla ESC for pressionada
-      break;        
+      break; 
+    case 32:
+        percorrer = !percorrer;
+        break;       
     case 'p':
         ModoDeProjecao = !ModoDeProjecao;
         glutPostRedisplay();
@@ -648,30 +666,26 @@ void keyboard ( unsigned char key, int x, int y )
         init();
         glutPostRedisplay();
         break;
-    case 'a':
-       // Observador.x--;
-       // Alvo.x--;
-        anguloCarro = 90;
-        posicaoCarro.x--;
-
-        break;
-    case 'w':
-        //Observador.z--;
-        //Alvo.z--;
+     case 'w':
+        direcao*=-1;
+        percorrendoEmZ = true;
         anguloCarro = 0;
-        posicaoCarro.z--;
         break;
+    case 'a':
+        direcao*=-1;
+        percorrendoEmZ = false;
+        anguloCarro = 90;
+        break;
+
     case 's':
-        //Observador.z++;
-        //Alvo.z++;
-        posicaoCarro.z++;
+        direcao*=-1;
+        percorrendoEmZ = true;
         anguloCarro =0;
         break;
     case 'd':
-        //Observador.x++;
-        //Alvo.x++;
+        direcao*=-1;
+        percorrendoEmZ = false;
         anguloCarro = -90;
-        posicaoCarro.x++;
         break;
     case 't':
         ComTextura = !ComTextura;
