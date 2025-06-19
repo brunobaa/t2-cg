@@ -56,6 +56,7 @@ int ModoDeProjecao = 1;
 // A funcao "Init" utiliza esta variavel. O valor dela eh alterado
 // pela tecla 'w'
 int ModoDeExibicao = 1;
+int anguloCarro = 0;
 
 double nFrames=0;
 double TempoTotal=0;
@@ -267,8 +268,9 @@ void animate()
     }
 }
 
-void DesenhaCarro(){
+void DesenhaCarro() {
 
+    glRotatef(anguloCarro,0.0,1.0,0.0);
     glPushMatrix();
         defineCor(Black);
         glRotatef(90,0.0,1.0,0.0);
@@ -648,18 +650,22 @@ void keyboard ( unsigned char key, int x, int y )
     case 'a':
         Observador.x--;
         Alvo.x--;
+        anguloCarro = 90;
         break;
     case 'w':
         Observador.z--;
         Alvo.z--;
+        anguloCarro = 0;
         break;
     case 's':
         Observador.z++;
         Alvo.z++;
+        anguloCarro = 180;
         break;
     case 'd':
         Observador.x++;
         Alvo.x++;
+        anguloCarro = -90;
         break;
     case 't':
         ComTextura = !ComTextura;
