@@ -267,6 +267,55 @@ void animate()
     }
 }
 
+void DesenhaCarro(){
+    //Desenha carcaca
+    glPushMatrix();
+        defineCor(Red);
+        glScalef(1.2, 2.0, 2.5);
+        glutSolidCube(1);
+    glPopMatrix();
+    
+
+    glPushMatrix();
+        defineCor(Red);
+        glScalef(1.2, 2.5, 1.5);
+        glutSolidCube(1);
+    glPopMatrix();
+    
+    glTranslatef(0,1,0);
+
+    glPushMatrix();
+        defineCor(Black);
+        glRotatef(90,0.0,1.0,0.0);
+        glTranslated(0,1,0);
+        glutSolidTorus(0.1,0.3,20,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        defineCor(Black);
+        glRotatef(90,0.0,1.0,0.0);
+        glTranslated(2,1,0);
+        glutSolidTorus(0.1,0.3,20,10);
+    glPopMatrix();
+
+
+    glPushMatrix();
+        defineCor(Black);
+        glRotatef(90,0.0,1.0,0.0);
+        glTranslated(2,1,1);
+        glutSolidTorus(0.1,0.3,20,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        defineCor(Black);
+        glRotatef(90,0.0,1.0,0.0);
+        glTranslated(0,1,1);
+        glutSolidTorus(0.1,0.3,20,10);
+    glPopMatrix();
+
+}  
+
+
 // **********************************************************************
 //  Desenha um predio no meio de uma c�lula
 // **********************************************************************
@@ -373,11 +422,14 @@ void DesenhaCidade(int QtdX, int QtdZ){
 
             glTranslated(0, 0, 1);
         }
-        // Aqui, os predios devem ser desenhados
         
         glPopMatrix();
         glTranslated(1, 0, 0);
     }
+
+    glTranslated(-15, 0, 15);
+    DesenhaCarro();
+
     glPopMatrix();
 }
 
