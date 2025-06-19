@@ -120,7 +120,7 @@ int textureMap[30][30] = {
 {0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0,	0,	0,	0,	0,	0,	0, 0,	0},
 };
 
-Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo;
+Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo, posicaoCarro;
 
 bool ComTextura = true;
 
@@ -233,6 +233,7 @@ void init(void)
     // com base no tamanho do mapa
     TerceiraPessoa = Ponto(QtdX/2, 5, QtdZ * 2);
     PosicaoVeiculo = Ponto(QtdX/2, 0, QtdZ/2);
+    posicaoCarro = Ponto(-15,0,15);
     
     PosicionaEmTerceiraPessoa();
     glDisable(GL_TEXTURE_2D);
@@ -268,8 +269,9 @@ void animate()
     }
 }
 
-void DesenhaCarro() {
+void DesenhaCarro(Ponto posicaoCarro) {
 
+    glTranslated(posicaoCarro.x, posicaoCarro.y, posicaoCarro.z);
     glRotatef(anguloCarro,0.0,1.0,0.0);
     glPushMatrix();
         defineCor(Black);
@@ -431,8 +433,7 @@ void DesenhaCidade(int QtdX, int QtdZ){
         glTranslated(1, 0, 0);
     }
 
-    glTranslated(-15, 0, 15);
-    DesenhaCarro();
+    DesenhaCarro(posicaoCarro);
 
     glPopMatrix();
 }
@@ -648,24 +649,29 @@ void keyboard ( unsigned char key, int x, int y )
         glutPostRedisplay();
         break;
     case 'a':
-        Observador.x--;
-        Alvo.x--;
+       // Observador.x--;
+       // Alvo.x--;
         anguloCarro = 90;
+        posicaoCarro.x--;
+
         break;
     case 'w':
-        Observador.z--;
-        Alvo.z--;
+        //Observador.z--;
+        //Alvo.z--;
         anguloCarro = 0;
+        posicaoCarro.z--;
         break;
     case 's':
-        Observador.z++;
-        Alvo.z++;
-        anguloCarro = 180;
+        //Observador.z++;
+        //Alvo.z++;
+        posicaoCarro.z++;
+        anguloCarro =0;
         break;
     case 'd':
-        Observador.x++;
-        Alvo.x++;
+        //Observador.x++;
+        //Alvo.x++;
         anguloCarro = -90;
+        posicaoCarro.x++;
         break;
     case 't':
         ComTextura = !ComTextura;
