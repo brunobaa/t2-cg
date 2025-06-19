@@ -299,10 +299,10 @@ void DesenhaCarro(){
     glPopMatrix();
 
 
-    glTranslatef(0.5,2,2);
+    glTranslatef(0.5,1.8,-1.5);
      //Desenha carcaca
     glPushMatrix();
-        defineCor(Green);
+        defineCor(Red);
         glScalef(1.8, 1.2, 4);
         glutSolidCube(1);
     glPopMatrix();
