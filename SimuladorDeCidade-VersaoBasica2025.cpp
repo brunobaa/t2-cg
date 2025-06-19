@@ -268,49 +268,51 @@ void animate()
 }
 
 void DesenhaCarro(){
-    //Desenha carcaca
-    glPushMatrix();
-        defineCor(Red);
-        glScalef(1.2, 2.0, 2.5);
-        glutSolidCube(1);
-    glPopMatrix();
-    
 
     glPushMatrix();
-        defineCor(Red);
-        glScalef(1.2, 2.5, 1.5);
+        defineCor(Black);
+        glRotatef(90,0.0,1.0,0.0);
+        glTranslated(0,1,-0.5);
+        glutSolidTorus(0.1,0.3,20,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        defineCor(Black);
+        glRotatef(90,0.0,1.0,0.0);
+        glTranslated(2,1,-0.5);
+        glutSolidTorus(0.1,0.3,20,10);
+    glPopMatrix();
+
+
+    glPushMatrix();
+        defineCor(Black);
+        glRotatef(90,0.0,1.0,0.0);
+        glTranslated(2,1,1.5);
+        glutSolidTorus(0.1,0.3,20,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        defineCor(Black);
+        glRotatef(90,0.0,1.0,0.0);
+        glTranslated(0,1,1.5);
+        glutSolidTorus(0.1,0.3,20,10);
+    glPopMatrix();
+
+
+    glTranslatef(0.5,2,2);
+     //Desenha carcaca
+    glPushMatrix();
+        defineCor(Green);
+        glScalef(1.8, 1.2, 4);
         glutSolidCube(1);
     glPopMatrix();
     
     glTranslatef(0,1,0);
 
     glPushMatrix();
-        defineCor(Black);
-        glRotatef(90,0.0,1.0,0.0);
-        glTranslated(0,1,0);
-        glutSolidTorus(0.1,0.3,20,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        defineCor(Black);
-        glRotatef(90,0.0,1.0,0.0);
-        glTranslated(2,1,0);
-        glutSolidTorus(0.1,0.3,20,10);
-    glPopMatrix();
-
-
-    glPushMatrix();
-        defineCor(Black);
-        glRotatef(90,0.0,1.0,0.0);
-        glTranslated(2,1,1);
-        glutSolidTorus(0.1,0.3,20,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        defineCor(Black);
-        glRotatef(90,0.0,1.0,0.0);
-        glTranslated(0,1,1);
-        glutSolidTorus(0.1,0.3,20,10);
+        defineCor(Red);
+        glScalef(1.4, 0.5, 3);
+        glutSolidCube(1);
     glPopMatrix();
 
 }  
