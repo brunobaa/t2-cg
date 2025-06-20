@@ -236,10 +236,9 @@ void init(void)
     
     // Define a posicao do observador e do veiculo
     // com base no tamanho do mapa
-    TerceiraPessoa = Ponto(QtdX/2, 5, QtdZ * 2);
+    TerceiraPessoa = Ponto(QtdX/2, 5, QtdZ);
     PosicaoVeiculo = Ponto(QtdX/2, 0, QtdZ/2);
-    posicaoCarro = Ponto(-15,0,28);
-    
+    posicaoCarro = Ponto(-15,0,28);    
     PosicionaEmTerceiraPessoa();
     glDisable(GL_TEXTURE_2D);
     
@@ -250,8 +249,7 @@ void init(void)
 // **********************************************************************
 //
 // **********************************************************************
-void animate()
-{
+void animate() {
     double dt;
     dt = T.getDeltaT();
     AccumDeltaT += dt;
@@ -278,33 +276,14 @@ void posicionaCarro() {
     glTranslated(posicaoCarro.x, posicaoCarro.y, posicaoCarro.z);
     if (!percorrer) return;
 
+    cout << posicaoCarro.x << endl;
+    cout << "z " << posicaoCarro.z << endl;
     if (percorrendoEmZ) {
         posicaoCarro.z+= 0.3 * direcao;
     } else {
         posicaoCarro.x+= 0.3 * direcao;
     }
 
-    if (posicaoCarro.x == -30) {
-        percorrer = ultimoWASDTeclado != 'w';
-        cout << "äquiii w" << endl;
-    }
-
-    if (posicaoCarro.x == 30) {
-        percorrer = ultimoWASDTeclado != 's';
-                cout << "äquiii s" << endl;
-
-    }
-
-    if (posicaoCarro.z == -30) {
-        percorrer = ultimoWASDTeclado != 'a';
-                cout << "äquiii a" << endl;
-
-    }
-
-    if (posicaoCarro.z == 30) {
-        percorrer = ultimoWASDTeclado != 'd';
-                cout << "äquiii d" << endl;
-    }
 }
 
 void DesenhaCarro() {
@@ -371,9 +350,9 @@ void DesenhaPredio(float altura, int cor)
     defineCor(cor);
     glPushMatrix();
         // sobe metade de “h” para alinhar a base em y=0
-        glTranslatef(0.0f, h/2.0f, 0.0f);
+        glScalef(0.5f, h, 0.5f);
+        glTranslatef(0.0f, 0.5f, 0.0f);
         // escala X,Z fixo; Y = h (já com o fator)
-        glScalef(0.2f, h, 0.2f);
         glutSolidCube(1);
     glPopMatrix();
     defineCor(White);
@@ -472,7 +451,6 @@ void DesenhaCidade(int QtdX, int QtdZ){
     }
 
     DesenhaCarro();
-
     glPopMatrix();
 }
 
@@ -486,8 +464,12 @@ void DefineLuz(void)
   GLfloat LuzDifusa[]   = {0.7, 0.7, 0.7};
   GLfloat LuzEspecular[] = {0.9f, 0.9f, 0.9 };
     
-  GLfloat PosicaoLuz0[]  = {Alvo.x, Alvo.y, Alvo.z };  // Posicao da Luz
-  //GLfloat PosicaoLuz0[]  = {0.0f, 3.0f, 5.0f };  // Posicao da Luz
+  GLfloat PosicaoLuz0[]  = {-10, posicaoCarro.y, 18.7 }; 
+  glLoadIdentity();
+  //glTranslated(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z + 10);
+  glTranslated(posicaoCarro.x, posicaoCarro.y, posicaoCarro.z);
+  DesenhaPredio(3, Black);
+  //DesenhaPredio(100, VioletRed);
   GLfloat Especularidade[] = {1.0f, 1.0f, 1.0f};
 
    // ****************  Fonte de Luz 0
@@ -516,7 +498,7 @@ void DefineLuz(void)
   // Define a concentracaoo do brilho.
   // Quanto maior o valor do Segundo parametro, mais
   // concentrado sera o brilho. (Valores v�lidos: de 0 a 128)
-  glMateriali(GL_FRONT,GL_SHININESS,51);
+  glMateriali(GL_FRONT,GL_SHININESS,120);
 
 }
 
@@ -633,8 +615,8 @@ void DesenhaEm2D()
     glViewport(0, h*AlturaViewportDeMensagens, w, h-h*AlturaViewportDeMensagens);
 
     if (ativarLuz)
-        glEnable(GL_LIGHTING);
-
+    
+    glEnable(GL_LIGHTING);
 }
 
 // **********************************************************************
@@ -646,8 +628,8 @@ void display( void )
 {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glMatrixMode(GL_MODELVIEW);
 
-	DefineLuz();
 
 	PosicUser();
     glLineWidth(2);
@@ -655,6 +637,8 @@ void display( void )
 	glMatrixMode(GL_MODELVIEW);
 
     DesenhaCidade(QtdX,QtdZ);
+    DefineLuz();
+
     
     glPushMatrix();
     glPopMatrix();
