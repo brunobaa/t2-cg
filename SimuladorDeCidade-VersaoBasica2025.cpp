@@ -466,9 +466,8 @@ void DefineLuz(void)
     
   GLfloat PosicaoLuz0[]  = {-10, posicaoCarro.y, 18.7 }; 
   glLoadIdentity();
-  //glTranslated(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z + 10);
-  glTranslated(posicaoCarro.x, posicaoCarro.y, posicaoCarro.z);
-  DesenhaPredio(3, Black);
+  glTranslated(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z + 10);
+  DesenhaPredio(20, Black);
   //DesenhaPredio(100, VioletRed);
   GLfloat Especularidade[] = {1.0f, 1.0f, 1.0f};
 
