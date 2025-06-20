@@ -127,6 +127,7 @@ Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo;
 Ponto posicaoCarro = Ponto(15,0,-15);
 
 bool ComTextura = true;
+unsigned char ultimoWASDTeclado;
 
 
 // **********************************************************************
@@ -237,7 +238,7 @@ void init(void)
     // com base no tamanho do mapa
     TerceiraPessoa = Ponto(QtdX/2, 5, QtdZ * 2);
     PosicaoVeiculo = Ponto(QtdX/2, 0, QtdZ/2);
-    posicaoCarro = Ponto(-15,0,15);
+    posicaoCarro = Ponto(-15,0,28);
     
     PosicionaEmTerceiraPessoa();
     glDisable(GL_TEXTURE_2D);
@@ -278,9 +279,31 @@ void posicionaCarro() {
     if (!percorrer) return;
 
     if (percorrendoEmZ) {
-        posicaoCarro.z+= 0.5 * direcao;
+        posicaoCarro.z+= 0.3 * direcao;
     } else {
-        posicaoCarro.x+= 0.5 * direcao;
+        posicaoCarro.x+= 0.3 * direcao;
+    }
+
+    if (posicaoCarro.x == -30) {
+        percorrer = ultimoWASDTeclado != 'w';
+        cout << "äquiii w" << endl;
+    }
+
+    if (posicaoCarro.x == 30) {
+        percorrer = ultimoWASDTeclado != 's';
+                cout << "äquiii s" << endl;
+
+    }
+
+    if (posicaoCarro.z == -30) {
+        percorrer = ultimoWASDTeclado != 'a';
+                cout << "äquiii a" << endl;
+
+    }
+
+    if (posicaoCarro.z == 30) {
+        percorrer = ultimoWASDTeclado != 'd';
+                cout << "äquiii d" << endl;
     }
 }
 
@@ -642,6 +665,31 @@ void display( void )
 }
 
 
+void defineAnguloCarro(unsigned char key) {
+    switch (key) {
+        case 'w':
+            anguloCarro = 0;
+            break;
+        case 's':
+            anguloCarro = 0;
+            break;
+        case 'a':
+            anguloCarro = 90;
+            break;
+        case 'd':
+            anguloCarro = -90;
+            break;
+    }
+
+}
+void tratarWASD(unsigned char key) {
+    if (key == ultimoWASDTeclado) return;
+    percorrendoEmZ = key == 'w' || key == 's';
+    direcao*=-1;
+    defineAnguloCarro(key);
+}
+
+
 // **********************************************************************
 //  void keyboard ( unsigned char key, int x, int y )
 //
@@ -649,8 +697,12 @@ void display( void )
 // **********************************************************************
 void keyboard ( unsigned char key, int x, int y )
 {
-	switch ( key ) 
-	{
+    if (key == 'w' || key == 'a' || key == 's' || key == 'd') {
+        tratarWASD(key);
+        ultimoWASDTeclado = key;
+        return;
+    }
+	switch ( key ) {
     case 27:        // Termina o programa qdo
       exit ( 0 );   // a tecla ESC for pressionada
       break; 
@@ -665,27 +717,6 @@ void keyboard ( unsigned char key, int x, int y )
         ModoDeExibicao = !ModoDeExibicao;
         init();
         glutPostRedisplay();
-        break;
-     case 'w':
-        direcao*=-1;
-        percorrendoEmZ = true;
-        anguloCarro = 0;
-        break;
-    case 'a':
-        direcao*=-1;
-        percorrendoEmZ = false;
-        anguloCarro = 90;
-        break;
-
-    case 's':
-        direcao*=-1;
-        percorrendoEmZ = true;
-        anguloCarro =0;
-        break;
-    case 'd':
-        direcao*=-1;
-        percorrendoEmZ = false;
-        anguloCarro = -90;
         break;
     case 't':
         ComTextura = !ComTextura;
