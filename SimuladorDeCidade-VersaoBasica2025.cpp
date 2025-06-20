@@ -464,10 +464,13 @@ void DefineLuz(void)
   GLfloat LuzDifusa[]   = {0.7, 0.7, 0.7};
   GLfloat LuzEspecular[] = {0.9f, 0.9f, 0.9 };
     
-  GLfloat PosicaoLuz0[]  = {-10, posicaoCarro.y, 18.7 }; 
   glLoadIdentity();
-  glTranslated(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z + 10);
-  DesenhaPredio(20, Black);
+  //glTranslated(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z + 10);
+  GLfloat PosicaoLuz0[]  = {-15, 6, 9.7 }; 
+  cout << "poscarro.x" << posicaoCarro.x << endl;
+  cout << "poscarro.y" << posicaoCarro.y << endl;
+  cout << "poscarro.z" << posicaoCarro.z << endl;
+
   //DesenhaPredio(100, VioletRed);
   GLfloat Especularidade[] = {1.0f, 1.0f, 1.0f};
 
@@ -497,7 +500,7 @@ void DefineLuz(void)
   // Define a concentracaoo do brilho.
   // Quanto maior o valor do Segundo parametro, mais
   // concentrado sera o brilho. (Valores v�lidos: de 0 a 128)
-  glMateriali(GL_FRONT,GL_SHININESS,120);
+  glMateriali(GL_FRONT,GL_SHININESS,50);
 
 }
 
