@@ -124,10 +124,11 @@ int textureMap[30][30] = {
 };
 
 Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo;
-Ponto posicaoCarro = Ponto(15,0,-15);
+Ponto aux = Ponto(-15,2,18.7);
+Ponto posicaoCarro = Ponto(0,0,0);
 
 bool ComTextura = true;
-unsigned char ultimoWASDTeclado;
+unsigned char ultimoWASDTeclado = 'w';
 
 
 // **********************************************************************
@@ -181,11 +182,13 @@ void InicializaCidade(int QtdX, int QtdZ)
 // centro do mapa
 // As variaveis "TerceiraPessoa" e "PosicaoVeiculo" sao setadas na INIT
 // **********************************************************************
-void PosicionaEmTerceiraPessoa()
-{
-    Observador = TerceiraPessoa;   // Posicao do Observador
-    Alvo = PosicaoVeiculo;         // Posicao do Alvo
-    //Alvo.imprime("Posiciona - Veiculo:");
+void PosicionaEmTerceiraPessoa() {
+    Observador = Ponto(QtdX/2, 30, QtdZ + 10);   // Posicao do Observador
+    Alvo = Ponto(QtdX/2, 0, QtdZ/2);        // Posicao do Alvo
+}
+
+void posicionaEmPrimeiraPessoa() {
+    Observador = Ponto(posicaoCarro.x, 4, posicaoCarro.z);   // Posicao do Observador
 }
 
 void InicializaTexturas() {
@@ -238,7 +241,7 @@ void init(void)
     // com base no tamanho do mapa
     TerceiraPessoa = Ponto(QtdX/2, 30, QtdZ + 10);
     PosicaoVeiculo = Ponto(QtdX/2, 0, QtdZ/2);
-    posicaoCarro = Ponto(-15,0,28);    
+    posicaoCarro = Ponto(15,0,25);    
     PosicionaEmTerceiraPessoa();
     glDisable(GL_TEXTURE_2D);
     
@@ -276,13 +279,32 @@ void posicionaCarro() {
     glTranslated(posicaoCarro.x, posicaoCarro.y, posicaoCarro.z);
     if (!percorrer) return;
 
-    cout << posicaoCarro.x << endl;
-    cout << "z " << posicaoCarro.z << endl;
-    if (percorrendoEmZ) {
-        posicaoCarro.z+= 0.3 * direcao;
-    } else {
-        posicaoCarro.x+= 0.3 * direcao;
+    if (ultimoWASDTeclado == 'w') {
+        posicaoCarro.z-=0.3;
+    } else if (ultimoWASDTeclado == 'a') {
+        posicaoCarro.x-=0.3;
+    } else if (ultimoWASDTeclado == 'd') {
+        posicaoCarro.x+=0.3;
+    } else if (ultimoWASDTeclado == 's') {
+        posicaoCarro.z+=0.3;
     }
+
+    if (ModoDeProjecao == 0) {
+        if (ultimoWASDTeclado == 'w') {
+            Alvo.z+= 0.3 * direcao;
+        }
+        if (ultimoWASDTeclado == 'd') {
+            Alvo.x+=0.3;
+        }
+
+        if (ultimoWASDTeclado == 'a') {
+            Alvo.x-=0.3;
+        }
+
+        if (ultimoWASDTeclado == 's') {
+            Alvo.z-=0.3;
+        }
+    } 
 
 }
 
@@ -449,9 +471,8 @@ void DesenhaCidade(int QtdX, int QtdZ){
         glPopMatrix();
         glTranslated(1, 0, 0);
     }
-
-    DesenhaCarro();
     glPopMatrix();
+
 }
 
 // **********************************************************************
@@ -465,8 +486,7 @@ void DefineLuz(void)
   GLfloat LuzEspecular[] = {0.9f, 0.9f, 0.9 };
     
   glLoadIdentity();
-  //glTranslated(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z + 10);
-  GLfloat PosicaoLuz0[]  = {posicaoCarro.x, posicaoCarro.y, posicaoCarro.z}; 
+  GLfloat PosicaoLuz0[]  = {Alvo.x, Alvo.y, Alvo.z}; 
 
 
   //DesenhaPredio(100, VioletRed);
@@ -513,9 +533,14 @@ void PosicUser()
     glLoadIdentity();
     // Define o volume de visualizacao sempre a partir da posicao do
     // observador
-    if (ModoDeProjecao == 0)
-        glOrtho(-10, 10, -10, 10, 0, 20); // Projecao paralela Orthografica
-    else gluPerspective(AnguloDeVisao,AspectRatio,0.01,1500); // Projecao perspectiva
+
+    if (ModoDeProjecao == 0) {
+        posicionaEmPrimeiraPessoa();
+    } else {
+        PosicionaEmTerceiraPessoa(); 
+    }
+
+    gluPerspective(AnguloDeVisao,AspectRatio,0.01,1500); // Projecao perspectiva
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -631,20 +656,17 @@ void display( void )
     glMatrixMode(GL_MODELVIEW);
 
 
-	PosicUser();
     glLineWidth(2);
 	
+	PosicUser();
 	glMatrixMode(GL_MODELVIEW);
-
-    DesenhaCidade(QtdX,QtdZ);
-    DefineLuz();
-
     
-    glPushMatrix();
-    glPopMatrix();
-
+    DesenhaCidade(QtdX,QtdZ);
+    DesenhaCarro();    
+    DefineLuz();
     DesenhaEm2D();
 
+    defineCor(Green);
 	glutSwapBuffers();
 }
 
@@ -681,7 +703,7 @@ void tratarWASD(unsigned char key) {
 // **********************************************************************
 void keyboard ( unsigned char key, int x, int y )
 {
-    if (key == 'w' || key == 'a' || key == 's' || key == 'd') {
+    if (key == 'w' || key == 'a' || key == 'd' || key == 's') {
         tratarWASD(key);
         ultimoWASDTeclado = key;
         return;
