@@ -236,7 +236,7 @@ void init(void)
     
     // Define a posicao do observador e do veiculo
     // com base no tamanho do mapa
-    TerceiraPessoa = Ponto(QtdX/2, 5, QtdZ);
+    TerceiraPessoa = Ponto(QtdX/2, 30, QtdZ + 10);
     PosicaoVeiculo = Ponto(QtdX/2, 0, QtdZ/2);
     posicaoCarro = Ponto(-15,0,28);    
     PosicionaEmTerceiraPessoa();
@@ -466,7 +466,7 @@ void DefineLuz(void)
     
   glLoadIdentity();
   //glTranslated(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z + 10);
-  GLfloat PosicaoLuz0[]  = {-15, 6, 9.7 }; 
+  GLfloat PosicaoLuz0[]  = {posicaoCarro.x, posicaoCarro.y, posicaoCarro.z}; 
 
 
   //DesenhaPredio(100, VioletRed);
