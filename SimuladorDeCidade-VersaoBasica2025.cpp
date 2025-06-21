@@ -609,13 +609,13 @@ void DesenhaEm2D()
     
     string combustivel = "Combustível: " + to_string((int)CombustivelAtual) + "%";
     string corCombustivel = (CombustivelAtual > 20.0f) ? "Green" : "Red";
-    printString(combustivel, 0, 7, CombustivelAtual > 20.0f ? Green : Red);
+    printString(combustivel, 7.5, 7.5, CombustivelAtual > 20.0f ? Green : Red);
     
     
-    printString("Esta area eh destinada a mensagens de texto. Veja a funcao DesenhaEm2D", 0,8, White);
-    printString("Amarelo", 0, 0, Yellow);
-    printString("Vermelho", 4, 2, Red);
-    printString("Verde", 8, 4, Green);
+    printString("pressione espaco para iniciar", 0.5,7.5, White);
+    printString("utilize w,a,s,d para se movimentar", 0.5, 5.5, Orange);
+    printString("passe pelos postos de gasolina para abastecer o carro", 0.5, 3.5, Orange);
+    printString("caso voce bata o carro ...", 0.5, 1.5, Orange);
 
     // Restaura os parametro que foram alterados
     glMatrixMode(GL_PROJECTION);
