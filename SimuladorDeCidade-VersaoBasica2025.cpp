@@ -87,6 +87,9 @@ public:
 #define VEICULO 40
 #define CALCADA 50
 
+float CombustivelAtual = 100.0f;  // Combustível atual (0-100%)
+float ConsumoCombustivel = 1.0f;  // Consumo por segundo
+
 // Matriz que armazena informacoes sobre o que existe na cidade
 Elemento Cidade[30][30];
 int textureMap[30][30] = {
@@ -412,7 +415,7 @@ void DesenhaLadrilho(int corBorda, int corDentro)
     glEnd();
 }
 
-void desenhaGasolina() {
+void desenhaCombustivel() {
     DesenhaPredio(2, Green); // por ser o msm objeto apenas abstraimos
 }
 
@@ -436,7 +439,7 @@ void DesenhaCidade(int QtdX, int QtdZ){
                 //DesenhaPredio(z * 1.2, Cidade[x][z].corDoObjeto);
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
             } else if (Cidade[x][z].tipo == COMBUSTIVEL) {
-                desenhaGasolina();
+                desenhaCombustivel();
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
             } else if (Cidade[x][z].tipo == CALCADA) {
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
@@ -603,6 +606,11 @@ void DesenhaEm2D()
         glVertex2f(0,10);
         glVertex2f(10,10);
     glEnd();
+    
+    string combustivel = "Combustível: " + to_string((int)CombustivelAtual) + "%";
+    string corCombustivel = (CombustivelAtual > 20.0f) ? "Green" : "Red";
+    printString(combustivel, 0, 7, CombustivelAtual > 20.0f ? Green : Red);
+    
     
     printString("Esta area eh destinada a mensagens de texto. Veja a funcao DesenhaEm2D", 0,8, White);
     printString("Amarelo", 0, 0, Yellow);
