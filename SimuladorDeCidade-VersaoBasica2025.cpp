@@ -39,6 +39,7 @@ double AccumDeltaT=0;
 #include "ListaDeCoresRGB.h"
 #include "Texture.h"
 
+
 GLfloat AnguloDeVisao=90;
 GLfloat AspectRatio, angulo=0;
 GLfloat AlturaViewportDeMensagens = 0.2; // percentual em relacao � altura da tela
@@ -88,7 +89,7 @@ public:
 #define CALCADA 50
 
 float CombustivelAtual = 100.0f;  // Combustível atual (0-100%)
-float ConsumoCombustivel = 1.0f;  // Consumo por segundo
+float ConsumoCombustivel = 1;  // Consumo por segundo
 
 // Matriz que armazena informacoes sobre o que existe na cidade
 Elemento Cidade[30][30];
@@ -211,6 +212,11 @@ void InicializaTexturas() {
 //  void init(void)
 //    Inicializa os parametros globais de OpenGL
 // **********************************************************************
+
+float GastoCombustivel(){
+    return CombustivelAtual -= ConsumoCombustivel;
+}
+
 void init(void)
 {
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f); // Fundo de tela preto
@@ -273,6 +279,7 @@ void animate() {
         TempoTotal = 0;
         nFrames = 0;
     }
+    GastoCombustivel();
 }
 
 void posicionaCarro() {
@@ -290,7 +297,7 @@ void posicionaCarro() {
 }
 
 void DesenhaCarro() {
-
+    glScaled(0.4,0.4,0.4);
     posicionaCarro();
     glRotatef(anguloCarro,0.0,1.0,0.0);
     glPushMatrix();
@@ -650,7 +657,6 @@ void display( void )
     
     glPushMatrix();
     glPopMatrix();
-
     DesenhaEm2D();
 
 	glutSwapBuffers();
