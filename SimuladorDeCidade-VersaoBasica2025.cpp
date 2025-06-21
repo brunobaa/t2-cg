@@ -188,7 +188,7 @@ void PosicionaEmTerceiraPessoa() {
 }
 
 void posicionaEmPrimeiraPessoa() {
-    Observador = Ponto(posicaoCarro.x, 4, posicaoCarro.z);   // Posicao do Observador
+    Observador = Ponto(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z);   // Posicao do Observador
 }
 
 void InicializaTexturas() {
@@ -290,6 +290,7 @@ void posicionaCarro() {
     }
 
     if (ModoDeProjecao == 0) {
+        Alvo.y = posicaoCarro.y;
         if (ultimoWASDTeclado == 'w') {
             Alvo.z+= 0.3 * direcao;
         }
@@ -311,6 +312,7 @@ void posicionaCarro() {
 void DesenhaCarro() {
 
     posicionaCarro();
+    if (!ModoDeProjecao) return;
     glRotatef(anguloCarro,0.0,1.0,0.0);
     glPushMatrix();
         defineCor(Black);
@@ -671,7 +673,73 @@ void display( void )
 }
 
 
+Ponto rotacionarPonto180Graus(const Ponto& pontoOriginal, const Ponto& pivot) {
+    // 1. Calcular a diferença do ponto em relação ao pivô
+    double dx = pontoOriginal.x - pivot.x;
+    double dz = pontoOriginal.z - pivot.z;
+
+    // 2. Aplicar a rotação de 180 graus na diferença
+    // Para 180 graus, x' = -x e y' = -y
+    double dx_rotacionado = -dx;
+    double dz_rotacionado = -dz;
+
+    // 3. Adicionar o pivô de volta para obter as coordenadas finais
+    Ponto pontoDeslocado;
+    pontoDeslocado.x = dx_rotacionado + pivot.x;
+    pontoDeslocado.z = dz_rotacionado + pivot.z;
+    pontoDeslocado.z = pontoOriginal.z; // Z permanece inalterado em rotações 2D no plano XY
+
+    return pontoDeslocado;
+}
+// Método para rotacionar um ponto em torno de um pivô por 90 graus
+Ponto rotacionarPonto90Graus(const Ponto& pontoOriginal, const Ponto& pivot, int direcao) {
+    // 1. Calcular a diferença do ponto em relação ao pivô
+    double dx = pontoOriginal.x - pivot.x;
+    double dz = pontoOriginal.z - pivot.z;
+
+    double dx_rotacionado;
+    double dz_rotacionado;
+
+    // 2. Aplicar a rotação de 90 graus na diferença
+    if (direcao > 0) {
+        // Rotação de 90 graus anti-horário: x' = -y, y' = x
+        dx_rotacionado = -dz;
+        dz_rotacionado = dx;
+    } else { // DirecaoRotacao::DIREITA
+        // Rotação de 90 graus horário: x' = y, y' = -x
+        dx_rotacionado = dz;
+        dz_rotacionado = -dx;
+    }
+
+    // 3. Adicionar o pivô de volta para obter as coordenadas finais
+    Ponto pontoDeslocado;
+    pontoDeslocado.x = dx_rotacionado + pivot.x;
+    pontoDeslocado.z = dz_rotacionado + pivot.z;
+    pontoDeslocado.z = pontoOriginal.z; // Z permanece inalterado em rotações 2D no plano XY
+
+    return pontoDeslocado;
+}
+
 void defineAnguloCarro(unsigned char key) {
+
+    glLoadIdentity();
+
+    if (ModoDeProjecao == 0 && key != ultimoWASDTeclado) {
+        if (key == 'a') {
+           Alvo = rotacionarPonto90Graus(Alvo, Observador,-1);
+        }
+        
+        if (key == 'd') {
+            Alvo = rotacionarPonto90Graus(Alvo, Observador,1);
+        }
+
+        if (key == 's' || key == 'w') {
+            Alvo = rotacionarPonto180Graus(Alvo, Observador);
+        }
+        cout << "älvo x depois=" <<Alvo.x << endl;
+    cout << "älvo z depois=" <<Alvo.z << endl;
+    }
+
     switch (key) {
         case 'w':
             anguloCarro = 0;
@@ -689,7 +757,6 @@ void defineAnguloCarro(unsigned char key) {
 
 }
 void tratarWASD(unsigned char key) {
-    if (key == ultimoWASDTeclado) return;
     percorrendoEmZ = key == 'w' || key == 's';
     direcao*=-1;
     defineAnguloCarro(key);
