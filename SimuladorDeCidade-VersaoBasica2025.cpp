@@ -124,7 +124,7 @@ int textureMap[30][30] = {
 
 Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo;
 Ponto aux = Ponto(-15,2,18.7);
-Ponto posicaoCarro = Ponto(2,0,2);
+Ponto posicaoCarro = Ponto(2.5,0,2.5);
 
 bool ComTextura = true;
 unsigned char ultimoWASDTeclado = 'w';
@@ -175,13 +175,13 @@ bool posicaoValida(double x, double z) {
         return false;
     }
     
-    // Verifica se não está em uma calçada (valor 12 no textureMap)
+    // Usa (int)x e (int)z para alinhar com o grid
     int ix = (int)x;
     int iz = (int)z;
     
     // Verifica se é uma calçada (valor 12 no textureMap original)
     if (textureMap[iz][ix] == 12) {
-        cout << "Colisão: Calçada - x:" << x << " z:" << z << " textureMap:" << textureMap[iz][ix] << endl;
+        cout << "Colisão: Calçada - x:" << x << " z:" << z << " ix:" << ix << " iz:" << iz << " textureMap:" << textureMap[iz][ix] << endl;
         return false;
     }
     
@@ -309,7 +309,7 @@ void init(void)
     // com base no tamanho do mapa
     TerceiraPessoa = Ponto(QtdX/2, 30, QtdZ + 10);
     PosicaoVeiculo = Ponto(QtdX/2, 0, QtdZ/2);
-    posicaoCarro = Ponto(2,0,2);    
+    posicaoCarro = Ponto(2.5,0,2.5);    
     PosicionaEmTerceiraPessoa();
     glDisable(GL_TEXTURE_2D);
     
@@ -747,50 +747,42 @@ void DesenhaEm2D()
 
     // Linha divisória
     defineCor(GreenCopper);
-    glLineWidth(15);
+    glLineWidth(10);
     glBegin(GL_LINES);
-        glVertex2f(0,10);
-        glVertex2f(10,10);
+        glVertex2f(0,9.5);
+        glVertex2f(10,9.5);
     glEnd();
 
-    // Colunas
-    int col0 = 0; // Título e status
-    int col1 = 2; // Info do carro
-    int col2 = 5; // Controles principais
-    int col3 = 8; // Debug e mouse
-    int baseY = 8;
-    int stepY = 2;
+    // Título centralizado
+    printString("SIMULADOR DE CIDADE", 2.5, 8.8, White);
 
-    // Título
-    printString("=== SIMULADOR DE CIDADE ===", col0, baseY + 2*stepY, White);
-
-    // Status do jogo
+    // Coluna esquerda: status e informações do carro
+    int colEsq = 0;
+    float y = 7.8;
+    float step = 1.1;
     string infoStatus = percorrer ? "Status: Movendo" : "Status: Parado";
     if (combustivel <= 0) infoStatus = "Status: Sem Combustível";
-    printString(infoStatus, col0, baseY, percorrer ? Green : Yellow);
-    string infoCamera = ModoDeProjecao == 0 ? "Câmera: 1ª Pessoa" : "Câmera: 3ª Pessoa";
-    printString(infoCamera, col0, baseY-stepY, White);
-
-    // Informações do carro
+    printString(infoStatus, colEsq, y, percorrer ? Green : Yellow); y -= step;
     string infoCombustivel = "Combustível: " + to_string((int)combustivel) + "%";
-    string infoPosicao = "Pos: (" + to_string((int)posicaoCarro.x) + ", " + to_string((int)posicaoCarro.z) + ")";
-    string infoVelocidade = "Velocidade: " + to_string((int)velocidade) + " m/s";
     int corCombustivel = (combustivel <= 20) ? Red : Green;
-    printString(infoCombustivel, col1, baseY + stepY, corCombustivel);
-    printString(infoPosicao, col1, baseY, White);
-    printString(infoVelocidade, col1, baseY-stepY, White);
+    printString(infoCombustivel, colEsq, y, corCombustivel); y -= step;
+    string infoPosicao = "Pos: (" + to_string((int)posicaoCarro.x) + ", " + to_string((int)posicaoCarro.z) + ")";
+    printString(infoPosicao, colEsq, y, White); y -= step;
+    string infoVelocidade = "Velocidade: " + to_string((int)velocidade) + " m/s";
+    printString(infoVelocidade, colEsq, y, White); y -= step;
+    string infoCamera = ModoDeProjecao == 0 ? "Câmera: 1ª Pessoa" : "Câmera: 3ª Pessoa";
+    printString(infoCamera, colEsq, y, White);
 
-    // Controles principais
-    printString("Controles:", col2, baseY + stepY, White);
-    printString("Setas: Girar", col2, baseY, White);
-    printString("Espaço: Mover/Parar", col2, baseY-stepY, White);
-    printString("P: Mudar Câmera", col2, baseY-2*stepY, White);
-
-    // Controles de debug e mouse
-    printString("Debug:", col3, baseY + stepY, White);
-    printString("D: Posição", col3, baseY, White);
-    printString("A: Área", col3, baseY-stepY, White);
-    printString("Mouse: Olhar", col3, baseY-2*stepY, White);
+    // Coluna direita: controles e debug
+    int colDir = 5;
+    y = 7.8;
+    printString("Controles:", colDir, y, White); y -= step;
+    printString("Setas: Girar", colDir, y, White); y -= step;
+    printString("Espaço: Mover/Parar", colDir, y, White); y -= step;
+    printString("P: Mudar Câmera", colDir, y, White); y -= step;
+    printString("D: Debug Posição", colDir, y, White); y -= step;
+    printString("A: Debug Área", colDir, y, White); y -= step;
+    printString("Mouse: Olhar", colDir, y, White);
 
     // Restaura o estado anterior do OpenGL
     glMatrixMode(GL_MODELVIEW);
@@ -923,10 +915,10 @@ void tratarWASD(unsigned char key) {
 void processarSetas(int tecla) {
     switch (tecla) {
         case GLUT_KEY_LEFT:
-            direcaoRotacao = 1;
+            direcaoRotacao = -1;
             break;
         case GLUT_KEY_RIGHT:
-            direcaoRotacao = -1;
+            direcaoRotacao = 1;
             break;
         case GLUT_KEY_UP:
             direcaoMovimento = 1;
