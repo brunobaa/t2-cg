@@ -41,7 +41,7 @@ double AccumDeltaT=0;
 
 GLfloat AnguloDeVisao=90;
 GLfloat AspectRatio, angulo=0;
-GLfloat AlturaViewportDeMensagens = 0.2; // percentual em relacao � altura da tela
+GLfloat AlturaViewportDeMensagens = 0.35; // percentual em relacao altura da tela
 
 
 // Controle do modo de projecao
@@ -124,11 +124,70 @@ int textureMap[30][30] = {
 
 Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo;
 Ponto aux = Ponto(-15,2,18.7);
-Ponto posicaoCarro = Ponto(0,0,0);
+Ponto posicaoCarro = Ponto(2,0,2);
 
 bool ComTextura = true;
 unsigned char ultimoWASDTeclado = 'w';
 
+// Novas variáveis para o sistema de controle
+double velocidade = 3.0; // 3 m/s
+double combustivel = 100.0; // 100% inicial
+double consumoCombustivel = 3.0; // 3% por segundo
+double anguloCameraHorizontal = 0.0;
+double anguloCameraVertical = 0.0;
+int direcaoMovimento = 0; // 0: parado, 1: frente, -1: trás
+int direcaoRotacao = 0; // 0: sem rotação, 1: direita, -1: esquerda
+bool mouseAtivo = false;
+int ultimoX = 0, ultimoY = 0;
+
+// Função para verificar se uma posição está dentro dos limites da cidade
+bool estaDentroDosLimites(double x, double z) {
+    return x >= 0 && x < QtdX && z >= 0 && z < QtdZ;
+}
+
+// Função para verificar se uma posição é uma rua válida
+bool ehRuaValida(double x, double z) {
+    int ix = (int)x;
+    int iz = (int)z;
+    
+    if (!estaDentroDosLimites(ix, iz)) return false;
+    
+    // Verifica se não é uma calçada (valor 12 no textureMap)
+    return textureMap[iz][ix] != 12;
+}
+
+// Função para verificar colisão com combustível
+void verificarCombustivel() {
+    int ix = (int)posicaoCarro.x;
+    int iz = (int)posicaoCarro.z;
+    
+    if (estaDentroDosLimites(ix, iz) && textureMap[iz][ix] == -1) {
+        combustivel = 100.0; // Reabastece
+        cout << "Combustível coletado! Nível: " << combustivel << "%" << endl;
+    }
+}
+
+// Função para verificar se o carro está em uma posição válida
+bool posicaoValida(double x, double z) {
+    // Verifica se está dentro dos limites
+    if (!estaDentroDosLimites(x, z)) {
+        cout << "Colisão: Fora dos limites - x:" << x << " z:" << z << endl;
+        return false;
+    }
+    
+    // Verifica se não está em uma calçada (valor 12 no textureMap)
+    int ix = (int)x;
+    int iz = (int)z;
+    
+    // Verifica se é uma calçada (valor 12 no textureMap original)
+    if (textureMap[iz][ix] == 12) {
+        cout << "Colisão: Calçada - x:" << x << " z:" << z << " textureMap:" << textureMap[iz][ix] << endl;
+        return false;
+    }
+    
+    // Permite movimento em qualquer lugar que não seja calçada
+    return true;
+}
 
 // **********************************************************************
 //
@@ -187,7 +246,17 @@ void PosicionaEmTerceiraPessoa() {
 }
 
 void posicionaEmPrimeiraPessoa() {
-    Observador = Ponto(posicaoCarro.x, posicaoCarro.y + 2, posicaoCarro.z);   // Posicao do Observador
+    // Posiciona a câmera na posição do carro com rotação
+    double alturaCamera = 2.0;
+    Observador = Ponto(posicaoCarro.x, posicaoCarro.y + alturaCamera, posicaoCarro.z);
+    
+    // Calcula a direção do olhar baseada na rotação do carro e da câmera
+    double anguloTotal = anguloCarro + anguloCameraHorizontal;
+    double distanciaOlhar = 5.0;
+    
+    Alvo.x = posicaoCarro.x + distanciaOlhar * sin(anguloTotal * M_PI / 180.0);
+    Alvo.y = posicaoCarro.y + alturaCamera + anguloCameraVertical;
+    Alvo.z = posicaoCarro.z + distanciaOlhar * cos(anguloTotal * M_PI / 180.0);
 }
 
 void InicializaTexturas() {
@@ -240,7 +309,7 @@ void init(void)
     // com base no tamanho do mapa
     TerceiraPessoa = Ponto(QtdX/2, 30, QtdZ + 10);
     PosicaoVeiculo = Ponto(QtdX/2, 0, QtdZ/2);
-    posicaoCarro = Ponto(15,0,25);    
+    posicaoCarro = Ponto(2,0,2);    
     PosicionaEmTerceiraPessoa();
     glDisable(GL_TEXTURE_2D);
     
@@ -257,6 +326,67 @@ void animate() {
     AccumDeltaT += dt;
     TempoTotal += dt;
     nFrames++;
+
+    // Movimento do carro com velocidade constante
+    if (percorrer && combustivel > 0) {
+        double distancia = velocidade * dt; // 3 m/s
+        
+        // Calcula nova posição baseada na direção do carro
+        double novaX = posicaoCarro.x;
+        double novaZ = posicaoCarro.z;
+        
+        if (direcaoMovimento != 0) {
+            double anguloRad = anguloCarro * M_PI / 180.0;
+            
+            if (direcaoMovimento > 0) { // Frente
+                novaX += distancia * sin(anguloRad);
+                novaZ += distancia * cos(anguloRad);
+            } else { // Trás
+                novaX -= distancia * sin(anguloRad);
+                novaZ -= distancia * cos(anguloRad);
+            }
+            
+            // Verifica se a nova posição é válida
+            if (posicaoValida(novaX, novaZ)) {
+                posicaoCarro.x = novaX;
+                posicaoCarro.z = novaZ;
+                combustivel -= consumoCombustivel * dt;
+                verificarCombustivel();
+                
+                // Para o carro se combustível chegar a 0
+                if (combustivel <= 0) {
+                    combustivel = 0;
+                    direcaoMovimento = 0;
+                    direcaoRotacao = 0;
+                    percorrer = false;
+                    cout << "Combustível esgotado! Carro parado." << endl;
+                }
+            } else {
+                // Colisão detectada - para o movimento
+                direcaoMovimento = 0;
+                cout << "=== COLISÃO DETECTADA ===" << endl;
+                cout << "Posição atual: x=" << posicaoCarro.x << " z=" << posicaoCarro.z << endl;
+                cout << "Tentativa de movimento para: x=" << novaX << " z=" << novaZ << endl;
+                
+                // Debug da posição que causou colisão
+                int novaIX = (int)novaX;
+                int novaIZ = (int)novaZ;
+                if (estaDentroDosLimites(novaIX, novaIZ)) {
+                    cout << "Tipo na nova posição: " << Cidade[novaIZ][novaIX].tipo << endl;
+                } else {
+                    cout << "Nova posição fora dos limites!" << endl;
+                }
+                cout << "=========================" << endl;
+            }
+        }
+        
+        // Rotação do carro
+        if (direcaoRotacao != 0) {
+            anguloCarro += direcaoRotacao * 90.0 * dt; // 90 graus por segundo
+            if (anguloCarro >= 360) anguloCarro -= 360;
+            if (anguloCarro < 0) anguloCarro += 360;
+        }
+    }
 
     if (AccumDeltaT > 1.0/30) // fixa a atualizacao da tela em 30
     {
@@ -275,95 +405,90 @@ void animate() {
 }
 
 void posicionaCarro() {
+    // Posiciona o carro na posição correta
+    // O centro do carro está em (0,0,0) no modelo
     glTranslated(posicaoCarro.x, posicaoCarro.y, posicaoCarro.z);
-    if (!percorrer) return;
-
-    if (ultimoWASDTeclado == 'w') {
-        posicaoCarro.z-=0.3;
-    } else if (ultimoWASDTeclado == 'a') {
-        posicaoCarro.x-=0.3;
-    } else if (ultimoWASDTeclado == 'd') {
-        posicaoCarro.x+=0.3;
-    } else if (ultimoWASDTeclado == 's') {
-        posicaoCarro.z+=0.3;
-    }
-
-    if (ModoDeProjecao == 0) {
-        Alvo.y = posicaoCarro.y;
-        if (ultimoWASDTeclado == 'w') {
-            Alvo.z+= 0.3 * direcao;
-        }
-        if (ultimoWASDTeclado == 'd') {
-            Alvo.x+=0.3;
-        }
-
-        if (ultimoWASDTeclado == 'a') {
-            Alvo.x-=0.3;
-        }
-
-        if (ultimoWASDTeclado == 's') {
-            Alvo.z-=0.3;
-        }
-    } 
-
+    
+    // Aplica a rotação do carro
+    glRotatef(anguloCarro, 0.0, 1.0, 0.0);
 }
 
 void DesenhaCarro() {
-
     posicionaCarro();
     if (!ModoDeProjecao) return;
-    glRotatef(anguloCarro,0.0,1.0,0.0);
-    glPushMatrix();
-        defineCor(Black);
-        glRotatef(90,0.0,1.0,0.0);
-        glTranslated(0,1,-0.5);
-        glutSolidTorus(0.1,0.3,20,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        defineCor(Black);
-        glRotatef(90,0.0,1.0,0.0);
-        glTranslated(2,1,-0.5);
-        glutSolidTorus(0.1,0.3,20,10);
-    glPopMatrix();
-
-
-    glPushMatrix();
-        defineCor(Black);
-        glRotatef(90,0.0,1.0,0.0);
-        glTranslated(2,1,1.5);
-        glutSolidTorus(0.1,0.3,20,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        defineCor(Black);
-        glRotatef(90,0.0,1.0,0.0);
-        glTranslated(0,1,1.5);
-        glutSolidTorus(0.1,0.3,20,10);
-    glPopMatrix();
-
-
-    glTranslatef(0.5,1.8,-1.5);
-     //Desenha carcaca
+    
+    // Diminui o tamanho do carro para 0.2
+    glScalef(0.2, 0.2, 0.2);
+    
+    // Carro centralizado - o centro está em (0,0,0)
+    // Corpo principal do carro
     glPushMatrix();
         defineCor(Red);
-        glScalef(1.8, 1.2, 4);
-        glutSolidCube(1);
+        // Corpo principal: 4x2x6 unidades, centralizado
+        glScalef(4.0, 2.0, 6.0);
+        glutSolidCube(1.0);
     glPopMatrix();
     
-    glTranslatef(0,1,0);
-
+    // Teto do carro (mais baixo)
     glPushMatrix();
         defineCor(Red);
-        glScalef(1.4, 0.5, 3);
-        glutSolidCube(1);
+        glTranslatef(0, 1.5, 0);
+        glScalef(3.0, 1.0, 4.0);
+        glutSolidCube(1.0);
     glPopMatrix();
-
-}  
+    
+    // Rodas - posicionadas nos cantos
+    defineCor(Black);
+    
+    // Roda dianteira esquerda
+    glPushMatrix();
+        glTranslatef(-1.5, 0.5, -2.5);
+        glRotatef(90, 0, 1, 0);
+        glutSolidTorus(0.3, 0.8, 16, 8);
+    glPopMatrix();
+    
+    // Roda dianteira direita
+    glPushMatrix();
+        glTranslatef(1.5, 0.5, -2.5);
+        glRotatef(90, 0, 1, 0);
+        glutSolidTorus(0.3, 0.8, 16, 8);
+    glPopMatrix();
+    
+    // Roda traseira esquerda
+    glPushMatrix();
+        glTranslatef(-1.5, 0.5, 2.5);
+        glRotatef(90, 0, 1, 0);
+        glutSolidTorus(0.3, 0.8, 16, 8);
+    glPopMatrix();
+    
+    // Roda traseira direita
+    glPushMatrix();
+        glTranslatef(1.5, 0.5, 2.5);
+        glRotatef(90, 0, 1, 0);
+        glutSolidTorus(0.3, 0.8, 16, 8);
+    glPopMatrix();
+    
+    // Faróis
+    defineCor(Yellow);
+    
+    // Farol esquerdo
+    glPushMatrix();
+        glTranslatef(-1.0, 0.5, -3.0);
+        glScalef(0.3, 0.3, 0.1);
+        glutSolidSphere(1.0, 8, 8);
+    glPopMatrix();
+    
+    // Farol direito
+    glPushMatrix();
+        glTranslatef(1.0, 0.5, -3.0);
+        glScalef(0.3, 0.3, 0.1);
+        glutSolidSphere(1.0, 8, 8);
+    glPopMatrix();
+}
 
 
 // **********************************************************************
-//  Desenha um predio no meio de uma c�lula
+//  Desenha um predio no meio de uma c lula
 // **********************************************************************
 void DesenhaPredio(float altura, int cor)
 {
@@ -372,7 +497,7 @@ void DesenhaPredio(float altura, int cor)
 
     defineCor(cor);
     glPushMatrix();
-        // sobe metade de “h” para alinhar a base em y=0
+        // sobe metade de "h" para alinhar a base em y=0
         glScalef(0.5f, h, 0.5f);
         glTranslatef(0.0f, 0.5f, 0.0f);
         // escala X,Z fixo; Y = h (já com o fator)
@@ -518,7 +643,7 @@ void DefineLuz(void)
 
   // Define a concentracaoo do brilho.
   // Quanto maior o valor do Segundo parametro, mais
-  // concentrado sera o brilho. (Valores v�lidos: de 0 a 128)
+  // concentrado sera o brilho. (Valores v lidos: de 0 a 128)
   glMateriali(GL_FRONT,GL_SHININESS,50);
 
 }
@@ -606,43 +731,76 @@ void DesenhaEm2D()
         glDisable(GL_LIGHTING);
         ativarLuz = true;
     }
+
+    // Salva o estado atual do OpenGL
+    glPushAttrib(GL_TRANSFORM_BIT | GL_VIEWPORT_BIT | GL_ENABLE_BIT);
     glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
     glLoadIdentity();
-    
-    // Salva o tamanho da janela
     int w = glutGet(GLUT_WINDOW_WIDTH);
     int h = glutGet(GLUT_WINDOW_HEIGHT);
-    
-    // Define a area a ser ocupada pela area OpenGL dentro da Janela
-    glViewport(0, 0, w, h*AlturaViewportDeMensagens); // a janela de mensagens fica na parte de baixo da janela
-
-    // Define os limites logicos da area OpenGL dentro da Janela
+    glViewport(0, 0, w, h*AlturaViewportDeMensagens);
     glOrtho(0,10, 0,10, 0,1);
-
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
-    // Desenha linha que Divide as �reas 2D e 3D
+    // Linha divisória
     defineCor(GreenCopper);
     glLineWidth(15);
     glBegin(GL_LINES);
         glVertex2f(0,10);
         glVertex2f(10,10);
     glEnd();
-    
-    printString("Esta area eh destinada a mensagens de texto. Veja a funcao DesenhaEm2D", 0,8, White);
-    printString("Amarelo", 0, 0, Yellow);
-    printString("Vermelho", 4, 2, Red);
-    printString("Verde", 8, 4, Green);
 
-    // Restaura os parametro que foram alterados
+    // Colunas
+    int col0 = 0; // Título e status
+    int col1 = 2; // Info do carro
+    int col2 = 5; // Controles principais
+    int col3 = 8; // Debug e mouse
+    int baseY = 8;
+    int stepY = 2;
+
+    // Título
+    printString("=== SIMULADOR DE CIDADE ===", col0, baseY + 2*stepY, White);
+
+    // Status do jogo
+    string infoStatus = percorrer ? "Status: Movendo" : "Status: Parado";
+    if (combustivel <= 0) infoStatus = "Status: Sem Combustível";
+    printString(infoStatus, col0, baseY, percorrer ? Green : Yellow);
+    string infoCamera = ModoDeProjecao == 0 ? "Câmera: 1ª Pessoa" : "Câmera: 3ª Pessoa";
+    printString(infoCamera, col0, baseY-stepY, White);
+
+    // Informações do carro
+    string infoCombustivel = "Combustível: " + to_string((int)combustivel) + "%";
+    string infoPosicao = "Pos: (" + to_string((int)posicaoCarro.x) + ", " + to_string((int)posicaoCarro.z) + ")";
+    string infoVelocidade = "Velocidade: " + to_string((int)velocidade) + " m/s";
+    int corCombustivel = (combustivel <= 20) ? Red : Green;
+    printString(infoCombustivel, col1, baseY + stepY, corCombustivel);
+    printString(infoPosicao, col1, baseY, White);
+    printString(infoVelocidade, col1, baseY-stepY, White);
+
+    // Controles principais
+    printString("Controles:", col2, baseY + stepY, White);
+    printString("Setas: Girar", col2, baseY, White);
+    printString("Espaço: Mover/Parar", col2, baseY-stepY, White);
+    printString("P: Mudar Câmera", col2, baseY-2*stepY, White);
+
+    // Controles de debug e mouse
+    printString("Debug:", col3, baseY + stepY, White);
+    printString("D: Posição", col3, baseY, White);
+    printString("A: Área", col3, baseY-stepY, White);
+    printString("Mouse: Olhar", col3, baseY-2*stepY, White);
+
+    // Restaura o estado anterior do OpenGL
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, h*AlturaViewportDeMensagens, w, h-h*AlturaViewportDeMensagens);
+    glPopMatrix();
+    glPopAttrib();
 
     if (ativarLuz)
-    
-    glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHTING);
 }
 
 // **********************************************************************
@@ -761,6 +919,131 @@ void tratarWASD(unsigned char key) {
     defineAnguloCarro(key);
 }
 
+// Função para processar teclas especiais (setas)
+void processarSetas(int tecla) {
+    switch (tecla) {
+        case GLUT_KEY_LEFT:
+            direcaoRotacao = 1;
+            break;
+        case GLUT_KEY_RIGHT:
+            direcaoRotacao = -1;
+            break;
+        case GLUT_KEY_UP:
+            direcaoMovimento = 1;
+            break;
+        case GLUT_KEY_DOWN:
+            direcaoMovimento = -1;
+            break;
+    }
+}
+
+// Função para parar movimento quando tecla é solta
+void pararMovimento(int tecla) {
+    switch (tecla) {
+        case GLUT_KEY_LEFT:
+        case GLUT_KEY_RIGHT:
+            direcaoRotacao = 0;
+            break;
+        case GLUT_KEY_UP:
+        case GLUT_KEY_DOWN:
+            direcaoMovimento = 0;
+            break;
+    }
+}
+
+// Funções para controle de mouse
+void mouse(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON) {
+        if (state == GLUT_DOWN) {
+            mouseAtivo = true;
+            ultimoX = x;
+            ultimoY = y;
+        } else {
+            mouseAtivo = false;
+        }
+    }
+}
+
+void mouseMove(int x, int y) {
+    if (mouseAtivo && ModoDeProjecao == 0) { // Só funciona em primeira pessoa
+        int deltaX = x - ultimoX;
+        int deltaY = y - ultimoY;
+        
+        // Sensibilidade do mouse
+        double sensibilidade = 0.5;
+        
+        anguloCameraHorizontal += deltaX * sensibilidade;
+        anguloCameraVertical -= deltaY * sensibilidade;
+        
+        // Limita o movimento vertical da câmera
+        if (anguloCameraVertical > 45) anguloCameraVertical = 45;
+        if (anguloCameraVertical < -45) anguloCameraVertical = -45;
+        
+        ultimoX = x;
+        ultimoY = y;
+    }
+}
+
+// Função para debug - mostra informações sobre a posição atual
+void debugPosicao() {
+    int ix = (int)posicaoCarro.x;
+    int iz = (int)posicaoCarro.z;
+    
+    cout << "=== DEBUG POSIÇÃO ===" << endl;
+    cout << "Posição atual: x=" << posicaoCarro.x << " z=" << posicaoCarro.z << endl;
+    cout << "Índices: ix=" << ix << " iz=" << iz << endl;
+    
+    if (estaDentroDosLimites(ix, iz)) {
+        cout << "Valor no textureMap: " << textureMap[iz][ix] << endl;
+        
+        // Interpreta o valor
+        if (textureMap[iz][ix] == -5) {
+            cout << "Tipo: PRÉDIO (obstáculo)" << endl;
+        } else if (textureMap[iz][ix] == -1) {
+            cout << "Tipo: COMBUSTÍVEL" << endl;
+        } else if (textureMap[iz][ix] == 12) {
+            cout << "Tipo: CALÇADA (obstáculo)" << endl;
+        } else if (textureMap[iz][ix] == 0) {
+            cout << "Tipo: VAZIO" << endl;
+        } else {
+            cout << "Tipo: RUA/ÁREA LIVRE" << endl;
+        }
+    } else {
+        cout << "Posição fora dos limites!" << endl;
+    }
+    cout << "=====================" << endl;
+}
+
+// Função para mostrar área ao redor da posição atual
+void debugAreaAoRedor() {
+    int ix = (int)posicaoCarro.x;
+    int iz = (int)posicaoCarro.z;
+    
+    cout << "=== DEBUG ÁREA 3x3 AO REDOR ===" << endl;
+    cout << "Posição central: x=" << posicaoCarro.x << " z=" << posicaoCarro.z << endl;
+    cout << "Índices centrais: ix=" << ix << " iz=" << iz << endl;
+    cout << endl;
+    
+    for (int i = iz - 1; i <= iz + 1; i++) {
+        for (int j = ix - 1; j <= ix + 1; j++) {
+            if (i >= 0 && i < QtdZ && j >= 0 && j < QtdX) {
+                cout << textureMap[i][j] << "\t";
+            } else {
+                cout << "X\t";
+            }
+        }
+        cout << endl;
+    }
+    cout << endl;
+    cout << "Legenda:" << endl;
+    cout << "-5 = PRÉDIO (obstáculo)" << endl;
+    cout << "-1 = COMBUSTÍVEL" << endl;
+    cout << "12 = CALÇADA (obstáculo)" << endl;
+    cout << "0 = VAZIO" << endl;
+    cout << "Outros = RUA/ÁREA LIVRE" << endl;
+    cout << "X = Fora dos limites" << endl;
+    cout << "=============================" << endl;
+}
 
 // **********************************************************************
 //  void keyboard ( unsigned char key, int x, int y )
@@ -780,6 +1063,10 @@ void keyboard ( unsigned char key, int x, int y )
       break; 
     case 32:
         percorrer = !percorrer;
+        if (!percorrer) {
+            direcaoMovimento = 0;
+            direcaoRotacao = 0;
+        }
         break;       
     case 'p':
         ModoDeProjecao = !ModoDeProjecao;
@@ -792,6 +1079,12 @@ void keyboard ( unsigned char key, int x, int y )
         break;
     case 't':
         ComTextura = !ComTextura;
+        break;
+    case 'd':
+        debugPosicao();
+        break;
+    case 'a':
+        debugAreaAoRedor();
         break;
     default:
             cout << key;
@@ -809,14 +1102,25 @@ void arrow_keys ( int a_keys, int x, int y )
 	switch ( a_keys ) 
 	{
 		case GLUT_KEY_UP:       // When Up Arrow Is Pressed...
-			glutFullScreen ( ); // Go Into Full Screen Mode
+			processarSetas(GLUT_KEY_UP);
 			break;
 	    case GLUT_KEY_DOWN:     // When Down Arrow Is Pressed...
-			glutInitWindowSize  ( 700, 500 ); 
+			processarSetas(GLUT_KEY_DOWN);
+			break;
+		case GLUT_KEY_LEFT:     // When Left Arrow Is Pressed...
+			processarSetas(GLUT_KEY_LEFT);
+			break;
+		case GLUT_KEY_RIGHT:    // When Right Arrow Is Pressed...
+			processarSetas(GLUT_KEY_RIGHT);
 			break;
 		default:
 			break;
 	}
+}
+
+// Função para detectar quando teclas especiais são soltas
+void arrow_keys_up(int a_keys, int x, int y) {
+    pararMovimento(a_keys);
 }
 
 // **********************************************************************
@@ -875,13 +1179,15 @@ int  main ( int argc, char** argv )
     // pressionar uma tecla especial
     glutSpecialFunc ( arrow_keys );
 
+    // Função para detectar quando teclas especiais são soltas
+    glutSpecialUpFunc(arrow_keys_up);
+
+    // Funções para controle de mouse
+    glutMouseFunc(mouse);
+    glutMotionFunc(mouseMove);
+
     // inicia o tratamento dos eventos
     glutMainLoop ( );
 
     return 0;
 }
-
-
-
-
-
