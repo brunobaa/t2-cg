@@ -23,11 +23,11 @@ using namespace std;
 #include <sys/time.h>
 #endif
 
-#ifdef __APPLE__
+#ifdef _APPLE_
 #include <GLUT/glut.h>
 #endif
 
-#ifdef __linux__
+#ifdef _linux_
 #include <GL/glut.h>
 #endif
 
@@ -137,7 +137,6 @@ double anguloCameraHorizontal = 0.0;
 double anguloCameraVertical = 0.0;
 int direcaoMovimento = 0; // 0: parado, 1: frente, -1: trás
 int direcaoRotacao = 0; // 0: sem rotação, 1: direita, -1: esquerda
-bool mouseAtivo = false;
 int ultimoX = 0, ultimoY = 0;
 
 // Função para verificar se uma posição está dentro dos limites da cidade
@@ -782,7 +781,6 @@ void DesenhaEm2D()
     printString("P: Mudar Câmera", colDir, y, White); y -= step;
     printString("D: Debug Posição", colDir, y, White); y -= step;
     printString("A: Debug Área", colDir, y, White); y -= step;
-    printString("Mouse: Olhar", colDir, y, White);
 
     // Restaura o estado anterior do OpenGL
     glMatrixMode(GL_MODELVIEW);
@@ -943,38 +941,6 @@ void pararMovimento(int tecla) {
     }
 }
 
-// Funções para controle de mouse
-void mouse(int button, int state, int x, int y) {
-    if (button == GLUT_LEFT_BUTTON) {
-        if (state == GLUT_DOWN) {
-            mouseAtivo = true;
-            ultimoX = x;
-            ultimoY = y;
-        } else {
-            mouseAtivo = false;
-        }
-    }
-}
-
-void mouseMove(int x, int y) {
-    if (mouseAtivo && ModoDeProjecao == 0) { // Só funciona em primeira pessoa
-        int deltaX = x - ultimoX;
-        int deltaY = y - ultimoY;
-        
-        // Sensibilidade do mouse
-        double sensibilidade = 0.5;
-        
-        anguloCameraHorizontal += deltaX * sensibilidade;
-        anguloCameraVertical -= deltaY * sensibilidade;
-        
-        // Limita o movimento vertical da câmera
-        if (anguloCameraVertical > 45) anguloCameraVertical = 45;
-        if (anguloCameraVertical < -45) anguloCameraVertical = -45;
-        
-        ultimoX = x;
-        ultimoY = y;
-    }
-}
 
 // Função para debug - mostra informações sobre a posição atual
 void debugPosicao() {
@@ -1173,10 +1139,6 @@ int  main ( int argc, char** argv )
 
     // Função para detectar quando teclas especiais são soltas
     glutSpecialUpFunc(arrow_keys_up);
-
-    // Funções para controle de mouse
-    glutMouseFunc(mouse);
-    glutMotionFunc(mouseMove);
 
     // inicia o tratamento dos eventos
     glutMainLoop ( );
