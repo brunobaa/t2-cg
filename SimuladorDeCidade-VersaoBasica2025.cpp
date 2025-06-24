@@ -12,6 +12,10 @@
 #include <iostream>
 #include <cmath>
 #include <ctime>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -88,38 +92,7 @@ public:
 
 // Matriz que armazena informacoes sobre o que existe na cidade
 Elemento Cidade[30][30];
-int textureMap[30][30] = {
-{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0,   0,  0,	0,  0,	0,	0,	0,	0,	0,  0,	0},
-{4,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	11},
-{5,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,  0,	0,	0,	0,	0,	0,	0, 0,	5},
-{5,	0,	12, -1,	12,	12,	12,	12,	12,	-1,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	0,	5},
-{5,	12,	12,	12,	-5,	12,	12,	-5,	12,	12,	-5, -5,	12,	12,	12,	12,	-5,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	5},
-{1,	6,	6,	6,	6,	6,	6,	8,	6,	6,	6,	6,	8,	6,	6,	6,	6,	8,	8,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	10},
-{5,	12,	-5,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	5,	12,	12,	12,	12,	12,	12, 12,	12,	12,	12,	5},
-{5,	12,	12,	12,	12,	12,	-5,	5,	12,	-5,	-5,	-5,	5,	12,	12,	-5,	12,	5,  5,	12,	12,	-5,	12,	12,	-5, 12,	-5,	12,	12,	5},
-{5,	12,	12,	-5,	12,	12,	12,	5,	12,	12,	12,	12,	5,	12,	-1,	12,	-5,	5,	5,	12,	-5,	12,	12,	12,	12, -1,	12,	12,	12,	5},
-{5,	12,	12,	12,	12,	12,	-5,	5,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	5,	12,	12,	-5,	12,	12,	12, 12,	12,	-5,	12,	5},
-{5,	12,	-5,	12,	12,	12,	12,	2,	6,	6,	6,	6,	9,	12,	12,	12,	12,	5,	5,	12,	12,	12,	 4, 6,  6, 11,	12,	12,	12,	5},
-{5,	12,	-1,	12,	-5,	12,	-5,	12,	12,	12,	12,	12,	12,	12,	12,	-5,	12,	5,	5,	12,	12,	-5,  5,	12,	12, 5,	12,	-5,	12,	5},
-{5,	-5,	12,	-5,	12,	-5,	12,	12,	12,	12,	-5,	12,	12,	-1,	12,	12,	12,	5,	5,	12,	-5,	12,	 5,	12,	12, 5,	12,	12,	12,	5},
-{5,	12,	12,	12,	12,	12,	-5,	12,	-5,	12,	12,	12,	12,	12,	12,	-5,	12,	5,	5,	12,	12,	-5,	 5,	12,	12, 5,	12,	12,	12,	5},
-{5,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	12,	5,	5,	12,	12,	12,	 5,	12,	12, 5,	12,	12,	12,	5},
-{1, 6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	7,	7,	6,	6,	6,	7,	6,	6,	7,	6,	6,	6,	10},
-{1,	6,	6,	6,	6,	6,	6,	8,	6,	6,	6,	6,	6,	8,	6,	6,	6,	6,	6,	8,	6,	6,	6,	6,	8,	8,	6,	6,	6,	10},
-{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	-1,	12,	5,	5,	12,	-5, 12,	5},
-{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	-5,	12,	12,	5,	12,	-1,	12,	12,	-1,	5,	12,	-5,	-5,	12,	5,	5,	12,	12,	12,	5},
-{5,	12,	12,	-5,	12,	12,	12,	5,	-5,	12,	12,	12,	-5,	5,	12,	-5,	12,	12,	12,	5,	12,	12,	-5,	12,	5,	5,	-5,	12,	-5,	5},
-{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	-5,	12,	12,	5,	12,	12,	12,	-5,	12,	5,	12,	-5,	12,	12,	5,	5,	12,	-5,	12,	5},
-{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12,	5,	5,	12,	12,	-5,	5},
-{1,	6,	6,	6,	6,	6,	6,	1,	6,	6,	6,	6,	6,	1,	6,	6,	6,	6,	6,	1,	6,	6,	6,	6,	1,	1,	6,	6,	6,	10},
-{5,	12,	12,	12,	12,	-5,	12,	5,	12,	-5,	12,	12, 12,	5,	12,	12,	12, 12,	12,	5,	12,12 ,	12,	12,	5,	5,	12,	12,	12,	5},
-{5,	12,	12,	12,	12,	12,	12,	5,	12,	12,	12,	12, 12,	5,	-5,	12,	12, 12,	-5,	5,	12,	-5,	12,	12,	5,	5,	12,	12,	12,	5},
-{5,	12,	-5,	12,	12,	-5,	12,	5,	12,	12,	12,	12, 12,	5,	12,	12,	12, -5,	12,	5,	12,	12,	12,	12,	5,	5,	12,	12,	12,	5},
-{5,	0,	12,	12,	-1,	12,	12,	5,	12,	12,	-5,	12, 12,	5,	12,	-5,	12, 12,	-5,	5,	12,	12,	12,	12,	5,	5,	12,	12,	0,	5},
-{5,	0,	0,	0,	0,	0,	0,	5,	0,	0,	0,	0,	0,	5,	0,	0,	0,	0,	0,	5,	0, 0,	0,	0,	5,	5,	0,	0, 0,	5},
-{2,	6,	6,	6,	6,	6,	6,	7,	6,	6,	6,	6,	6,	7,	6,	6,	6,	6,	6,	7,	6,	6,	6,	6,	7,	7,	6,	6,	6,	9},
-{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0,	0,	0,	0,	0,	0,	0, 0,	0},
-};
+int** textureMap = nullptr; // Matriz dinâmica para textureMap
 
 Ponto Observador, Alvo, TerceiraPessoa, PosicaoVeiculo;
 Ponto aux = Ponto(-15,2,18.7);
@@ -136,6 +109,11 @@ double anguloCameraVertical = 0.0;
 int direcaoMovimento = 0; // 0: parado, 1: frente, -1: trás
 int direcaoRotacao = 0; // 0: sem rotação, 1: direita, -1: esquerda
 int ultimoX = 0, ultimoY = 0;
+
+// Declarações das funções
+bool lerTextureMapDoArquivo(const string& nomeArquivo, int& linhas, int& colunas);
+void liberarTextureMap();
+void cleanup();
 
 // Função para verificar se uma posição está dentro dos limites da cidade
 bool estaDentroDosLimites(double x, double z) {
@@ -295,10 +273,19 @@ void init(void)
     
     glEnable(GL_NORMALIZE);
     
-    // Quantidade de retangulos do piso vai depender do
-    // mapa que sera' lido da
-    QtdX = 30;
-    QtdZ = 30;
+    // Carrega a matriz textureMap do arquivo
+    int linhas, colunas;
+    if (!lerTextureMapDoArquivo("textureMap.txt", linhas, colunas)) {
+        cout << "Erro ao carregar textureMap. Usando valores padrão." << endl;
+        // Em caso de erro, define valores padrão
+        QtdX = 30;
+        QtdZ = 30;
+    } else {
+        // Define as dimensões baseadas no arquivo carregado
+        QtdX = colunas;
+        QtdZ = linhas;
+    }
+    
     InicializaTexturas();
     InicializaCidade(QtdX, QtdZ);
     
@@ -919,7 +906,8 @@ void keyboard ( unsigned char key, int x, int y )
 {
 	switch ( key ) {
     case 27:        // Termina o programa qdo
-      exit ( 0 );   // a tecla ESC for pressionada
+      cleanup();    // a tecla ESC for pressionada
+      exit ( 0 );   
       break; 
     case 32:
         percorrer = !percorrer;
@@ -1050,4 +1038,85 @@ int  main ( int argc, char** argv )
     glutMainLoop ( );
 
     return 0;
+}
+
+// Função para ler a matriz textureMap do arquivo
+bool lerTextureMapDoArquivo(const string& nomeArquivo, int& linhas, int& colunas) {
+    ifstream arquivo(nomeArquivo);
+    if (!arquivo.is_open()) {
+        cout << "Erro ao abrir o arquivo: " << nomeArquivo << endl;
+        return false;
+    }
+    
+    vector<vector<int>> matrizTemp;
+    string linha;
+    
+    // Lê o arquivo linha por linha
+    while (getline(arquivo, linha)) {
+        vector<int> valoresLinha;
+        stringstream ss(linha);
+        int valor;
+        
+        // Lê os valores separados por tabulação
+        while (ss >> valor) {
+            valoresLinha.push_back(valor);
+        }
+        
+        if (!valoresLinha.empty()) {
+            matrizTemp.push_back(valoresLinha);
+        }
+    }
+    
+    arquivo.close();
+    
+    if (matrizTemp.empty()) {
+        cout << "Arquivo vazio ou formato inválido" << endl;
+        return false;
+    }
+    
+    // Define as dimensões
+    linhas = matrizTemp.size();
+    colunas = matrizTemp[0].size();
+    
+    // Verifica se todas as linhas têm o mesmo tamanho
+    for (int i = 1; i < linhas; i++) {
+        if (matrizTemp[i].size() != colunas) {
+            cout << "Erro: Linhas com tamanhos diferentes" << endl;
+            return false;
+        }
+    }
+    
+    // Aloca a matriz dinâmica
+    textureMap = new int*[linhas];
+    for (int i = 0; i < linhas; i++) {
+        textureMap[i] = new int[colunas];
+    }
+    
+    // Copia os valores para a matriz
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            textureMap[i][j] = matrizTemp[i][j];
+        }
+    }
+    
+    cout << "Matriz textureMap carregada com sucesso: " << linhas << "x" << colunas << endl;
+    return true;
+}
+
+// Função para liberar a memória da matriz textureMap
+void liberarTextureMap() {
+    if (textureMap != nullptr) {
+        // Usa as dimensões atuais da matriz
+        for (int i = 0; i < QtdZ; i++) {
+            delete[] textureMap[i];
+        }
+        delete[] textureMap;
+        textureMap = nullptr;
+    }
+}
+
+// Função de cleanup para ser chamada quando o programa for encerrado
+void cleanup() {
+    liberarTextureMap();
+    cout << "Memória liberada com sucesso." << endl;
 }
