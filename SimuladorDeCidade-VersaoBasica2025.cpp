@@ -23,11 +23,11 @@ using namespace std;
 #include <sys/time.h>
 #endif
 
-#ifdef _APPLE_
+#ifdef APPLE
 #include <GLUT/glut.h>
 #endif
 
-#ifdef _linux_
+#ifdef linux
 #include <GL/glut.h>
 #endif
 
@@ -332,16 +332,13 @@ void animate() {
         double novaX = posicaoCarro.x;
         double novaZ = posicaoCarro.z;
         
-        if (direcaoMovimento != 0) {
+        // Se percorrer está ativo, sempre move para frente na direção atual
+        if (percorrer) {
             double anguloRad = anguloCarro * M_PI / 180.0;
             
-            if (direcaoMovimento > 0) { // Frente
-                novaX += distancia * sin(anguloRad);
-                novaZ += distancia * cos(anguloRad);
-            } else { // Trás
-                novaX -= distancia * sin(anguloRad);
-                novaZ -= distancia * cos(anguloRad);
-            }
+            // Sempre move para frente quando percorrer está ativo
+            novaX += distancia * sin(anguloRad);
+            novaZ += distancia * cos(anguloRad);
             
             // Verifica se a nova posição é válida
             if (posicaoValida(novaX, novaZ)) {
@@ -360,6 +357,7 @@ void animate() {
                 }
             } else {
                 // Colisão detectada - para o movimento
+                percorrer = false;
                 direcaoMovimento = 0;
                 cout << "=== COLISÃO DETECTADA ===" << endl;
                 cout << "Posição atual: x=" << posicaoCarro.x << " z=" << posicaoCarro.z << endl;
@@ -775,7 +773,7 @@ void DesenhaEm2D()
     y = 7.8;
     printString("Controles:", colDir, y, White); y -= step;
     printString("Setas: Girar", colDir, y, White); y -= step;
-    printString("Espaço: Mover/Parar", colDir, y, White); y -= step;
+    printString("Espaço: Iniciar/Parar", colDir, y, White); y -= step;
     printString("P: Mudar Câmera", colDir, y, White); y -= step;
     printString("D: Debug Posição", colDir, y, White); y -= step;
     printString("A: Debug Área", colDir, y, White); y -= step;
@@ -925,7 +923,11 @@ void keyboard ( unsigned char key, int x, int y )
       break; 
     case 32:
         percorrer = !percorrer;
-        if (!percorrer) {
+        if (percorrer) {
+            // Quando começar a percorrer, define movimento para frente
+            direcaoMovimento = 1;
+        } else {
+            // Quando parar, zera todas as direções
             direcaoMovimento = 0;
             direcaoRotacao = 0;
         }
