@@ -90,7 +90,6 @@ public:
 #define COMBUSTIVEL 30
 #define VEICULO 40
 #define CALCADA 50
-#define MAX_OBJETOS_3D 100
 
 // Matriz que armazena informacoes sobre o que existe na cidade
 Elemento Cidade[30][30];
@@ -109,7 +108,7 @@ double consumoCombustivel = 3.0; // 3% por segundo
 int direcaoMovimento = 0; // 0: parado, 1: frente, -1: trás
 int direcaoRotacao = 0; // 0: sem rotação, 1: direita, -1: esquerda
 int ultimoX = 0, ultimoY = 0;
-Objeto3D objetos[MAX_OBJETOS_3D];
+Objeto3D vaca, cactus, veiculo, dog, arvore;
 
 // Declarações das funções
 bool lerTextureMapDoArquivo(const string& nomeArquivo, int& linhas, int& colunas);
@@ -166,21 +165,39 @@ bool posicaoValida(double x, double z) {
 }
 
 
-void carregarObjetoTRI(const char* arquivo) {
-    if (!objetos[0].carregarTRI(arquivo)) {
-        cout << "Erro ao carregar arquivo TRI: " << arquivo << endl;
-        return;
+void carregarObjetosTRI() {
+    if (vaca.carregarTRI("Cow.tri")){
+        vaca.modeloCarregado = true;
+        vaca.escala = 0.05f;
+        vaca.cor = White;
+    } else {
+        cout << "Erro ao carregar o objeto vaca" << endl;
     }
-    
-    // Inicializa todos os objetos com os mesmos dados do modelo carregado
-    for(int i = 0; i < MAX_OBJETOS_3D; i++) {
-        objetos[i].modeloCarregado = true;
-        objetos[i].vertices = objetos[0].vertices;
-        objetos[i].indices = objetos[0].indices;
-        objetos[i].ativo = true;
+
+    if (dog.carregarTRI("dog.tri")){
+        dog.modeloCarregado = true;
+        dog.escala = 0.1;
+        dog.cor = Red;
+        dog.rotacao = 90;
+    } else {
+        cout << "Erro ao carregar o objeto dog" << endl;
     }
-    
-    cout << "Modelo carregado com sucesso para todos os objetos" << endl;
+
+    if (cactus.carregarTRI("cactus.tri")){
+        cactus.modeloCarregado = true;
+        cactus.escala = 0.2;
+        cactus.cor = Green;
+    } else {
+        cout << "Erro ao carregar o objeto cactus" << endl;
+    }
+
+    if (arvore.carregarTRI("tree.tri")){
+        arvore.modeloCarregado = true;
+        arvore.escala = 0.2;
+        arvore.cor = Green;
+    } else {
+        cout << "Erro ao carregar o objeto arvore" << endl;
+    }
 }
 
 // **********************************************************************
@@ -317,7 +334,7 @@ void init(void)
     
     AnguloDeVisao = 45;
     UseTexture (-1); // desabilita o uso de textura, inicialmente
-    carregarObjetoTRI("Cow.tri");
+    carregarObjetosTRI();
 }
 // **********************************************************************
 //
@@ -558,10 +575,38 @@ void desenhaGasolina() {
     DesenhaPredio(2, Green); // por ser o msm objeto apenas abstraimos
 }
 
-// **********************************************************************
-//
-//
-// **********************************************************************
+void desenhaVaca() {
+    glPushMatrix();
+        vaca.desenhar();
+    glPopMatrix();
+}
+
+void desenhaCactus() {
+    glPushMatrix();
+        cactus.desenhar();
+    glPopMatrix();
+}
+
+void desenhaDog() {
+    glPushMatrix();
+        dog.desenhar();
+    glPopMatrix();
+}
+
+void desenhaArvore() {
+    glPushMatrix();
+        arvore.desenhar();
+    glPopMatrix();
+}
+
+
+void desenhaObstaculo(int indice) {
+    if (indice % 2 == 0) {
+    }
+    desenhaDog();
+
+}
+
 void DesenhaCidade(int QtdX, int QtdZ) {
     glPushMatrix();
     defineCor(White);
@@ -573,7 +618,8 @@ void DesenhaCidade(int QtdX, int QtdZ) {
         {
             if (Cidade[x][z].tipo == PREDIO) {
                 if (p == 5) p = 0;
-                DesenhaPredio((z * 1.2f) * 0.5f, Cidade[x][z].corDoObjeto);
+                //DesenhaPredio((z * 1.2f) * 0.5f, Cidade[x][z].corDoObjeto);
+                desenhaObstaculo(z);
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
             } else if (Cidade[x][z].tipo == COMBUSTIVEL) {
                 desenhaGasolina();
@@ -805,13 +851,10 @@ void display( void )
     
     DesenhaCidade(QtdX,QtdZ);
     DesenhaCarro();    
+
     DefineLuz();
     DesenhaEm2D();
 
-
-    glScalef(1, 1,1); // Escala muito pequena para o modelo TRI
-    objetos[0].inicializar(30, -45, 0);
-    objetos[0].desenhar();
     
 
     defineCor(Green);
