@@ -384,10 +384,10 @@ void animate() {
             novaX += distancia * sin(anguloRad);
             novaZ += distancia * cos(anguloRad);
             
-            // Verifica se a nova posição é válida
-            if (posicaoValida(novaX, novaZ)) {
-                posicaoCarro.x = novaX;
+
+
                 posicaoCarro.z = novaZ;
+                posicaoCarro.x = novaX;
                 combustivel -= consumoCombustivel * dt;
                 verificarCombustivel();
                 
@@ -399,24 +399,7 @@ void animate() {
                     percorrer = false;
                     cout << "Combustível esgotado! Carro parado." << endl;
                 }
-            } else {
-                // Colisão detectada - para o movimento
-                percorrer = false;
-                direcaoMovimento = 0;
-                cout << "=== COLISÃO DETECTADA ===" << endl;
-                cout << "Posição atual: x=" << posicaoCarro.x << " z=" << posicaoCarro.z << endl;
-                cout << "Tentativa de movimento para: x=" << novaX << " z=" << novaZ << endl;
-                
-                // Debug da posição que causou colisão
-                int novaIX = (int)novaX;
-                int novaIZ = (int)novaZ;
-                if (estaDentroDosLimites(novaIX, novaIZ)) {
-                    cout << "Tipo na nova posição: " << Cidade[novaIZ][novaIX].tipo << endl;
-                } else {
-                    cout << "Nova posição fora dos limites!" << endl;
-                }
-                cout << "=========================" << endl;
-            }
+        
         
         // Rotação do carro
         if (direcaoRotacao != 0) {
@@ -451,7 +434,7 @@ void posicionaCarro() {
 void DesenhaCarro() {
     posicionaCarro();
     if (!ModoDeProjecao) return;
-    if (usarVeiculoPadrao) {
+    if (true) {
 
         // Diminui o tamanho do carro para 0.2
         glScalef(0.2, 0.2, 0.2);
