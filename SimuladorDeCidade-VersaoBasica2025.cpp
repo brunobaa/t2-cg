@@ -90,6 +90,10 @@ public:
 #define COMBUSTIVEL 30
 #define VEICULO 40
 #define CALCADA 50
+#define ARVORE 60
+#define DOG 70
+#define VACA 80
+#define CACTUS 90
 
 // Matriz que armazena informacoes sobre o que existe na cidade
 Elemento Cidade[30][30];
@@ -100,6 +104,7 @@ Ponto aux = Ponto(-15,2,18.7);
 Ponto posicaoCarro = Ponto(2.5,0,2.5);
 
 bool ComTextura = true;
+bool usarVeiculoPadrao = true;
 
 // Novas variáveis para o sistema de controle
 double velocidade = 3.0; // 3 m/s
@@ -205,6 +210,7 @@ void carregarObjetosTRI() {
         veiculo.escala = 0.2;
         veiculo.cor = SkyBlue;
         veiculo.rotacao = 90;
+        usarVeiculoPadrao = false;
     } else {
         cout << "Erro ao carregar o objeto veiculo" << endl;
     }
@@ -232,7 +238,15 @@ void InicializaCidade(int QtdX, int QtdZ)
     for (int i=0;i<QtdZ;i++) {
         for (int j=0;j<QtdX;j++)
         {
-            if (textureMap[i][j] == -5) {
+            if (textureMap[i][j] == ARVORE) {
+                Cidade[i][j].tipo = ARVORE;
+            } else if (textureMap[i][j] == DOG) {
+                Cidade[i][j].tipo = DOG;
+            }else if (textureMap[i][j] == CACTUS) {
+                Cidade[i][j].tipo = CACTUS;
+            } else if (textureMap[i][j] == VACA) {
+                Cidade[i][j].tipo = VACA;
+            } else if (textureMap[i][j] == -5) {
                 Cidade[i][j].tipo = PREDIO;
                 Cidade[i][j].corDoObjeto = i * 5;
             } else if (textureMap[i][j] == -1) {
@@ -436,75 +450,77 @@ void posicionaCarro() {
 
 void DesenhaCarro() {
     posicionaCarro();
-     if (!ModoDeProjecao) return;
-    
-    // Diminui o tamanho do carro para 0.2
-    glScalef(0.2, 0.2, 0.2);
-    
-    // Carro centralizado - o centro está em (0,0,0)
-    // Corpo principal do carro
-    glPushMatrix();
-        defineCor(Red);
-        // Corpo principal: 4x2x6 unidades, centralizado
-        glScalef(4.0, 2.0, 6.0);
-        glutSolidCube(1.0);
-    glPopMatrix();
-    
-    // Teto do carro (mais baixo)
-    glPushMatrix();
-        defineCor(Red);
-        glTranslatef(0, 1.5, 0);
-        glScalef(3.0, 1.0, 4.0);
-        glutSolidCube(1.0);
-    glPopMatrix();
-    
-    // Rodas - posicionadas nos cantos
-    defineCor(Black);
-    
-    // Roda dianteira esquerda
-    glPushMatrix();
-        glTranslatef(-1.5, 0.5, -2.5);
-        glRotatef(90, 0, 1, 0);
-        glutSolidTorus(0.3, 0.8, 16, 8);
-    glPopMatrix();
-    
-    // Roda dianteira direita
-    glPushMatrix();
-        glTranslatef(1.5, 0.5, -2.5);
-        glRotatef(90, 0, 1, 0);
-        glutSolidTorus(0.3, 0.8, 16, 8);
-    glPopMatrix();
-    
-    // Roda traseira esquerda
-    glPushMatrix();
-        glTranslatef(-1.5, 0.5, 2.5);
-        glRotatef(90, 0, 1, 0);
-        glutSolidTorus(0.3, 0.8, 16, 8);
-    glPopMatrix();
-    
-    // Roda traseira direita
-    glPushMatrix();
-        glTranslatef(1.5, 0.5, 2.5);
-        glRotatef(90, 0, 1, 0);
-        glutSolidTorus(0.3, 0.8, 16, 8);
-    glPopMatrix();
-    
-    // Faróis
-    defineCor(Yellow);
-    
-    // Farol esquerdo
-    glPushMatrix();
-        glTranslatef(-1.0, 0.5, -3.0);
-        glScalef(0.3, 0.3, 0.1);
-        glutSolidSphere(1.0, 8, 8);
-    glPopMatrix();
-    
-    // Farol direito
-    glPushMatrix();
-        glTranslatef(1.0, 0.5, -3.0);
-        glScalef(0.3, 0.3, 0.1);
-        glutSolidSphere(1.0, 8, 8);
-    glPopMatrix(); 
+    if (!ModoDeProjecao) return;
+    if (usarVeiculoPadrao) {
+
+        // Diminui o tamanho do carro para 0.2
+        glScalef(0.2, 0.2, 0.2);
+        
+        // Carro centralizado - o centro está em (0,0,0)
+        // Corpo principal do carro
+        glPushMatrix();
+            defineCor(Red);
+            // Corpo principal: 4x2x6 unidades, centralizado
+            glScalef(4.0, 2.0, 6.0);
+            glutSolidCube(1.0);
+        glPopMatrix();
+        
+        // Teto do carro (mais baixo)
+        glPushMatrix();
+            defineCor(Red);
+            glTranslatef(0, 1.5, 0);
+            glScalef(3.0, 1.0, 4.0);
+            glutSolidCube(1.0);
+        glPopMatrix();
+        
+        // Rodas - posicionadas nos cantos
+        defineCor(Black);
+        
+        // Roda dianteira esquerda
+        glPushMatrix();
+            glTranslatef(-1.5, 0.5, -2.5);
+            glRotatef(90, 0, 1, 0);
+            glutSolidTorus(0.3, 0.8, 16, 8);
+        glPopMatrix();
+        
+        // Roda dianteira direita
+        glPushMatrix();
+            glTranslatef(1.5, 0.5, -2.5);
+            glRotatef(90, 0, 1, 0);
+            glutSolidTorus(0.3, 0.8, 16, 8);
+        glPopMatrix();
+        
+        // Roda traseira esquerda
+        glPushMatrix();
+            glTranslatef(-1.5, 0.5, 2.5);
+            glRotatef(90, 0, 1, 0);
+            glutSolidTorus(0.3, 0.8, 16, 8);
+        glPopMatrix();
+        
+        // Roda traseira direita
+        glPushMatrix();
+            glTranslatef(1.5, 0.5, 2.5);
+            glRotatef(90, 0, 1, 0);
+            glutSolidTorus(0.3, 0.8, 16, 8);
+        glPopMatrix();
+        
+        // Faróis
+        defineCor(Yellow);
+        
+        // Farol esquerdo
+        glPushMatrix();
+            glTranslatef(-1.0, 0.5, -3.0);
+            glScalef(0.3, 0.3, 0.1);
+            glutSolidSphere(1.0, 8, 8);
+        glPopMatrix();
+        
+        // Farol direito
+        glPushMatrix();
+            glTranslatef(1.0, 0.5, -3.0);
+            glScalef(0.3, 0.3, 0.1);
+            glutSolidSphere(1.0, 8, 8);
+        glPopMatrix(); 
+    }
 
     veiculo.desenhar();
 }
@@ -655,7 +671,18 @@ void DesenhaCidade(int QtdX, int QtdZ) {
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
                 desenharObstaculo = false;
             } else if (Cidade[x][z].tipo == CALCADA) {
-                
+                DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+            } else if (Cidade[x][z].tipo == ARVORE) {
+                desenhaArvore();
+                DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+            } else if (Cidade[x][z].tipo == DOG) {
+                desenhaDog();
+                DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+            } else if (Cidade[x][z].tipo == CACTUS) {
+                desenhaCactus();
+                DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+            }else if (Cidade[x][z].tipo == VACA) {
+                desenhaVaca();
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
             } else {
                // desenhaObstaculo(z);
