@@ -34,6 +34,7 @@ void Objeto3D::desenhar() {
     
     if (modeloCarregado && !vertices.empty()) {
         // Desenhar modelo 3D carregado
+        std::cout << "Desenhando modelo 3D com " << vertices.size() << " vértices e " << indices.size() << " índices" << std::endl;
         
         // Define uma cor para o modelo
         glColor3f(0.8f, 0.6f, 0.4f); // Cor marrom para a vaca

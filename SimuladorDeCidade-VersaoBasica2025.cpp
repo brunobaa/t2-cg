@@ -809,10 +809,10 @@ void display( void )
     DesenhaEm2D();
 
 
-    glTranslatef(15, 0, 15);
-    glScalef(0.005, 0.005, 0.005);
-    objetos[0].inicializar(0, 0, 90);
+    glScalef(1, 1,1); // Escala muito pequena para o modelo TRI
+    objetos[0].inicializar(30, -45, 0);
     objetos[0].desenhar();
+    
 
     defineCor(Green);
 	glutSwapBuffers();
