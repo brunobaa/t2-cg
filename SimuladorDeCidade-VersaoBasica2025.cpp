@@ -104,8 +104,6 @@ bool ComTextura = true;
 double velocidade = 3.0; // 3 m/s
 double combustivel = 100.0; // 100% inicial
 double consumoCombustivel = 3.0; // 3% por segundo
-double anguloCameraHorizontal = 0.0;
-double anguloCameraVertical = 0.0;
 int direcaoMovimento = 0; // 0: parado, 1: frente, -1: trás
 int direcaoRotacao = 0; // 0: sem rotação, 1: direita, -1: esquerda
 int ultimoX = 0, ultimoY = 0;
@@ -226,12 +224,11 @@ void posicionaEmPrimeiraPessoa() {
     Observador = Ponto(posicaoCarro.x, posicaoCarro.y + alturaCamera, posicaoCarro.z);
     
     // Calcula a direção do olhar baseada na rotação do carro e da câmera
-    double anguloTotal = anguloCarro + anguloCameraHorizontal;
     double distanciaOlhar = 5.0;
     
-    Alvo.x = posicaoCarro.x + distanciaOlhar * sin(anguloTotal * M_PI / 180.0);
-    Alvo.y = posicaoCarro.y + alturaCamera + anguloCameraVertical;
-    Alvo.z = posicaoCarro.z + distanciaOlhar * cos(anguloTotal * M_PI / 180.0);
+    Alvo.x = posicaoCarro.x + distanciaOlhar * sin(anguloCarro * M_PI / 180.0);
+    Alvo.y = posicaoCarro.y + alturaCamera;
+    Alvo.z = posicaoCarro.z + distanciaOlhar * cos(anguloCarro * M_PI / 180.0);
 }
 
 void InicializaTexturas() {
@@ -319,9 +316,7 @@ void animate() {
         double novaX = posicaoCarro.x;
         double novaZ = posicaoCarro.z;
         
-        // Se percorrer está ativo, sempre move para frente na direção atual
-        if (percorrer) {
-            double anguloRad = anguloCarro * M_PI / 180.0;
+         double anguloRad = anguloCarro * M_PI / 180.0;
             
             // Sempre move para frente quando percorrer está ativo
             novaX += distancia * sin(anguloRad);
@@ -360,7 +355,6 @@ void animate() {
                 }
                 cout << "=========================" << endl;
             }
-        }
         
         // Rotação do carro
         if (direcaoRotacao != 0) {
@@ -370,14 +364,13 @@ void animate() {
         }
     }
 
-    if (AccumDeltaT > 1.0/30) // fixa a atualizacao da tela em 30
-    {
+    if (AccumDeltaT > 1.0/30) {
         AccumDeltaT = 0;
         angulo+= 1;
         glutPostRedisplay();
     }
-    if (TempoTotal > 5.0)
-    {
+
+    if (TempoTotal > 5.0) {
         cout << "Tempo Acumulado: "  << TempoTotal << " segundos. " ;
         cout << "Nros de Frames sem desenho: " << nFrames << endl;
         cout << "FPS(sem desenho): " << nFrames/TempoTotal << endl;
@@ -387,8 +380,6 @@ void animate() {
 }
 
 void posicionaCarro() {
-    // Posiciona o carro na posição correta
-    // O centro do carro está em (0,0,0) no modelo
     glTranslated(posicaoCarro.x, posicaoCarro.y, posicaoCarro.z);
     
     // Aplica a rotação do carro
@@ -477,7 +468,7 @@ void DesenhaPredio(float altura, int cor)
     float fator = 0.5f;            // 50% da altura original
     float h = altura * fator;      
 
-    defineCor(cor);
+    defineCor(Green);
     glPushMatrix();
         // sobe metade de "h" para alinhar a base em y=0
         glScalef(0.5f, h, 0.5f);
@@ -550,7 +541,7 @@ void desenhaGasolina() {
 //
 //
 // **********************************************************************
-void DesenhaCidade(int QtdX, int QtdZ){
+void DesenhaCidade(int QtdX, int QtdZ) {
     glPushMatrix();
     defineCor(White);
     int p =0;
@@ -561,9 +552,7 @@ void DesenhaCidade(int QtdX, int QtdZ){
         {
             if (Cidade[x][z].tipo == PREDIO) {
                 if (p == 5) p = 0;
-                //caso queria que os predios voltem ao tamnho grande troque as duas funções
                 DesenhaPredio((z * 1.2f) * 0.5f, Cidade[x][z].corDoObjeto);
-                //DesenhaPredio(z * 1.2, Cidade[x][z].corDoObjeto);
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
             } else if (Cidade[x][z].tipo == COMBUSTIVEL) {
                 desenhaGasolina();
