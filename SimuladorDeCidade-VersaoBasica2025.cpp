@@ -809,8 +809,8 @@ void display( void )
     DesenhaEm2D();
 
 
-    glTranslatef(0, 0, 15);
-    glScalef(0.005, 0.005, 0.005); // Escala muito pequena para o modelo TRI
+    glTranslatef(15, 0, 15);
+    glScalef(0.005, 0.005, 0.005);
     objetos[0].inicializar(0, 0, 90);
     objetos[0].desenhar();
 

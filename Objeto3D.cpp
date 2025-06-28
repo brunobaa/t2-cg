@@ -29,7 +29,7 @@ void Objeto3D::desenhar() {
     }
 
     glPushMatrix();
-    //glTranslatef(posicao.x, posicao.y, posicao.z);
+    glTranslatef(posicao.x, posicao.y, posicao.z);
     glRotatef(rotacao, 0, 1, 0);
     
     if (modeloCarregado && !vertices.empty()) {
