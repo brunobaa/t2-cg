@@ -752,19 +752,12 @@ void display( void )
     // Desenha o carro
     DesenhaCarro();    
     
-    // Desenha outros objetos 3D
-    glPushMatrix();
-    glTranslatef(-15, 0, 15);
-    glScalef(0.001, 0.001, 0.001); // Escala muito pequena para o modelo TRI
-    objetos[0].inicializar(0, 0, 0);
-    objetos[0].desenhar();
-    glPopMatrix();
+
     
-    // Desenha um prédio de exemplo
-    glPushMatrix();
     glTranslatef(15, 0, 15);
-    DesenhaPredio(20, Green);
-    glPopMatrix();
+    glScalef(0.005, 0.005, 0.005); // Escala muito pequena para o modelo TRI
+    objetos[0].inicializar(0, 0, 90);
+    objetos[0].desenhar();
     
     DefineLuz();
     DesenhaEm2D();
