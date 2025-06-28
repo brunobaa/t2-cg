@@ -468,7 +468,7 @@ void DesenhaPredio(float altura, int cor)
     float fator = 0.5f;            // 50% da altura original
     float h = altura * fator;      
 
-    defineCor(Green);
+    defineCor(cor);
     glPushMatrix();
         // sobe metade de "h" para alinhar a base em y=0
         glScalef(0.5f, h, 0.5f);
