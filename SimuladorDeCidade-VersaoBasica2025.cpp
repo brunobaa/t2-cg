@@ -168,7 +168,8 @@ bool posicaoValida(double x, double z) {
 void carregarObjetosTRI() {
     if (vaca.carregarTRI("Cow.tri")){
         vaca.modeloCarregado = true;
-        vaca.escala = 0.05f;
+        vaca.escala = 0.003f;
+        vaca.rotacao = 90;
         vaca.cor = White;
     } else {
         cout << "Erro ao carregar o objeto vaca" << endl;
@@ -186,15 +187,15 @@ void carregarObjetosTRI() {
     if (cactus.carregarTRI("cactus.tri")){
         cactus.modeloCarregado = true;
         cactus.escala = 0.2;
-        cactus.cor = Green;
+        cactus.cor = GreenYellow;
     } else {
         cout << "Erro ao carregar o objeto cactus" << endl;
     }
 
     if (arvore.carregarTRI("tree.tri")){
         arvore.modeloCarregado = true;
-        arvore.escala = 0.2;
-        arvore.cor = Green;
+        arvore.escala = 0.4;
+        arvore.cor = GreenCopper;
     } else {
         cout << "Erro ao carregar o objeto arvore" << endl;
     }
@@ -601,9 +602,25 @@ void desenhaArvore() {
 
 
 void desenhaObstaculo(int indice) {
-    if (indice % 2 == 0) {
+    if (indice % 4 == 0) {
+        desenhaDog();
+        return;
     }
-    desenhaDog();
+
+    if (indice % 5 == 0) {
+        desenhaCactus();
+        return;
+    }
+
+    if (indice % 7 == 0) {
+        desenhaVaca();
+        return;
+    }
+
+    if (indice % 3 == 0) {
+        desenhaArvore();
+        return;
+    }
 
 }
 
@@ -616,18 +633,24 @@ void DesenhaCidade(int QtdX, int QtdZ) {
         glPushMatrix();
         for(int z=0; z<QtdZ;z++)
         {
+            bool desenharObstaculo = true;
             if (Cidade[x][z].tipo == PREDIO) {
                 if (p == 5) p = 0;
-                //DesenhaPredio((z * 1.2f) * 0.5f, Cidade[x][z].corDoObjeto);
-                desenhaObstaculo(z);
+                DesenhaPredio((z * 1.2f) * 0.5f, Cidade[x][z].corDoObjeto);
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+                desenharObstaculo = false;
             } else if (Cidade[x][z].tipo == COMBUSTIVEL) {
                 desenhaGasolina();
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+                desenharObstaculo = false;
             } else if (Cidade[x][z].tipo == CALCADA) {
+                
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
+            } else {
+               // desenhaObstaculo(z);
+                DesenhaLadrilhoTEX(Cidade[x][z].textureID);
             }
-            DesenhaLadrilhoTEX(Cidade[x][z].textureID);
+
 
             glTranslated(0, 0, 1);
         }

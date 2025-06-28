@@ -24,8 +24,6 @@ void Objeto3D::desenhar() {
         defineCor(cor);
         
         if (modeloCarregado && !vertices.empty()) {
-            // Define uma cor para o modelo
-            cout << escala << endl;
             glBegin(GL_TRIANGLES);
                 for (size_t i = 0; i < indices.size(); i += 3) {
                     if (i + 2 < indices.size()) {
