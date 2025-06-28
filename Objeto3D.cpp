@@ -23,19 +23,24 @@ void Objeto3D::inicializar(float x, float z, float rot) {
 }
 
 void Objeto3D::desenhar() {
-    if (!ativo) return;
+    if (!ativo) {
+        std::cout << "Objeto não está ativo!" << std::endl;
+        return;
+    }
 
     glPushMatrix();
     glTranslatef(posicao.x, posicao.y, posicao.z);
     glRotatef(rotacao, 0, 1, 0);
     
-    
     if (modeloCarregado && !vertices.empty()) {
         // Desenhar modelo 3D carregado
+        std::cout << "Desenhando modelo 3D com " << vertices.size() << " vértices e " << indices.size() << " índices" << std::endl;
+        
+        // Define uma cor para o modelo
+        glColor3f(0.8f, 0.6f, 0.4f); // Cor marrom para a vaca
         
         glBegin(GL_TRIANGLES);
         for (size_t i = 0; i < indices.size(); i += 3) {
-
             if (i + 2 < indices.size()) {
                 Ponto& v1 = vertices[indices[i]];
                 Ponto& v2 = vertices[indices[i + 1]];
@@ -55,7 +60,11 @@ void Objeto3D::desenhar() {
             }
         }
         glEnd();
+        
+        // Restaura a cor
+        glColor3f(1.0f, 1.0f, 1.0f);
     } else {
+        std::cout << "Usando fallback: desenhando vaca simples" << std::endl;
         // Desenhar vaca simples como fallback
         glColor3f(0.0f, 0.0f, 0.0f); // Cor preta
         
@@ -96,6 +105,9 @@ void Objeto3D::desenhar() {
         glScalef(0.1f, 0.8f, 0.1f);
         glutSolidCube(1.0f);
         glPopMatrix();
+        
+        // Restaura a cor
+        glColor3f(1.0f, 1.0f, 1.0f);
     }
     
     glPopMatrix();
@@ -104,7 +116,7 @@ void Objeto3D::desenhar() {
 bool Objeto3D::carregarTRI(const char* arquivo) {
     std::ifstream file(arquivo);
     if (!file.is_open()) {
-        std::cout << "Erro ao abrir o arquivo modelo" << arquivo << std::endl;
+        std::cout << "Erro ao abrir o arquivo modelo: " << arquivo << std::endl;
         return false;
     }
     
@@ -113,6 +125,7 @@ bool Objeto3D::carregarTRI(const char* arquivo) {
     
     std::string linha;
     int indiceAtual = 0;
+    int triangulosLidos = 0;
     
     while (std::getline(file, linha)) {
         if (linha.empty()) continue;
@@ -133,18 +146,28 @@ bool Objeto3D::carregarTRI(const char* arquivo) {
             indices.push_back(indiceAtual + 2);
             
             indiceAtual += 3;
+            triangulosLidos++;
         }
     }
     
     file.close();
     
     if (vertices.empty()) {
-        std::cout << "Erro: não foram encontrados triangulos" << std::endl;
+        std::cout << "Erro: não foram encontrados triangulos no arquivo " << arquivo << std::endl;
         return false;
     }
     
     modeloCarregado = true;
-    std::cout << "Modelo foi carregado! " << vertices.size() << " vértices, " << indices.size() << " índices" << std::endl;
+    std::cout << "Modelo carregado com sucesso! " << vertices.size() << " vértices, " 
+              << indices.size() << " índices, " << triangulosLidos << " triângulos" << std::endl;
+    
+    // Debug: mostra alguns vértices para verificar se estão sendo lidos corretamente
+    if (vertices.size() >= 3) {
+        std::cout << "Primeiro vértice: (" << vertices[0].x << ", " << vertices[0].y << ", " << vertices[0].z << ")" << std::endl;
+        std::cout << "Segundo vértice: (" << vertices[1].x << ", " << vertices[1].y << ", " << vertices[1].z << ")" << std::endl;
+        std::cout << "Terceiro vértice: (" << vertices[2].x << ", " << vertices[2].y << ", " << vertices[2].z << ")" << std::endl;
+    }
+    
     return true;
 }
 
