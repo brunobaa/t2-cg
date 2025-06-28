@@ -199,6 +199,15 @@ void carregarObjetosTRI() {
     } else {
         cout << "Erro ao carregar o objeto arvore" << endl;
     }
+    
+    if (veiculo.carregarTRI("moto.tri")){
+        veiculo.modeloCarregado = true;
+        veiculo.escala = 0.2;
+        veiculo.cor = SkyBlue;
+        veiculo.rotacao = 90;
+    } else {
+        cout << "Erro ao carregar o objeto veiculo" << endl;
+    }
 }
 
 // **********************************************************************
@@ -427,7 +436,7 @@ void posicionaCarro() {
 
 void DesenhaCarro() {
     posicionaCarro();
-    if (!ModoDeProjecao) return;
+     if (!ModoDeProjecao) return;
     
     // Diminui o tamanho do carro para 0.2
     glScalef(0.2, 0.2, 0.2);
@@ -495,7 +504,9 @@ void DesenhaCarro() {
         glTranslatef(1.0, 0.5, -3.0);
         glScalef(0.3, 0.3, 0.1);
         glutSolidSphere(1.0, 8, 8);
-    glPopMatrix();
+    glPopMatrix(); 
+
+    veiculo.desenhar();
 }
 
 
