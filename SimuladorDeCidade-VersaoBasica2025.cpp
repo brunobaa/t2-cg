@@ -42,6 +42,7 @@ double AccumDeltaT=0;
 #include "Ponto.h"
 #include "ListaDeCoresRGB.h"
 #include "Texture.h"
+#include "Objeto3D.h"
 
 GLfloat AnguloDeVisao=90;
 GLfloat AspectRatio, angulo=0;
@@ -89,6 +90,7 @@ public:
 #define COMBUSTIVEL 30
 #define VEICULO 40
 #define CALCADA 50
+#define MAX_OBJETOS_3D 100
 
 // Matriz que armazena informacoes sobre o que existe na cidade
 Elemento Cidade[30][30];
@@ -107,6 +109,7 @@ double consumoCombustivel = 3.0; // 3% por segundo
 int direcaoMovimento = 0; // 0: parado, 1: frente, -1: trás
 int direcaoRotacao = 0; // 0: sem rotação, 1: direita, -1: esquerda
 int ultimoX = 0, ultimoY = 0;
+Objeto3D objetos[MAX_OBJETOS_3D];
 
 // Declarações das funções
 bool lerTextureMapDoArquivo(const string& nomeArquivo, int& linhas, int& colunas);
@@ -160,6 +163,24 @@ bool posicaoValida(double x, double z) {
     
     // Permite movimento em qualquer lugar que não seja calçada
     return true;
+}
+
+
+void carregarObjetoTRI(const char* arquivo) {
+    if (!objetos[0].carregarTRI(arquivo)) {
+        cout << "Erro ao carregar arquivo TRI: " << arquivo << endl;
+        return;
+    }
+    
+    // Inicializa todos os objetos com os mesmos dados do modelo carregado
+    for(int i = 0; i < MAX_OBJETOS_3D; i++) {
+        objetos[i].modeloCarregado = true;
+        objetos[i].vertices = objetos[0].vertices;
+        objetos[i].indices = objetos[0].indices;
+        objetos[i].ativo = true;
+    }
+    
+    cout << "Modelo carregado com sucesso para todos os objetos" << endl;
 }
 
 // **********************************************************************
@@ -296,7 +317,7 @@ void init(void)
     
     AnguloDeVisao = 45;
     UseTexture (-1); // desabilita o uso de textura, inicialmente
-    
+    carregarObjetoTRI("Cow.tri");
 }
 // **********************************************************************
 //
@@ -468,7 +489,7 @@ void DesenhaPredio(float altura, int cor)
     float fator = 0.5f;            // 50% da altura original
     float h = altura * fator;      
 
-    defineCor(Green);
+    defineCor(cor);
     glPushMatrix();
         // sobe metade de "h" para alinhar a base em y=0
         glScalef(0.5f, h, 0.5f);
@@ -786,6 +807,12 @@ void display( void )
     DesenhaCarro();    
     DefineLuz();
     DesenhaEm2D();
+
+
+    glTranslatef(15, 0, 15);
+    glScalef(0.005, 0.005, 0.005); // Escala muito pequena para o modelo TRI
+    objetos[0].inicializar(0, 0, 90);
+    objetos[0].desenhar();
 
     defineCor(Green);
 	glutSwapBuffers();
