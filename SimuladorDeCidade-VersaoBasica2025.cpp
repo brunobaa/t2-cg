@@ -168,19 +168,15 @@ bool posicaoValida(double x, double z) {
 
 void carregarObjetoTRI(const char* arquivo) {
     if (!objetos[0].carregarTRI(arquivo)) {
-        cout << "Erro ao carregar arquivo TRI: " << arquivo << endl;
         return;
     }
-    
-    // Inicializa todos os objetos com os mesmos dados do modelo carregado
-    for(int i = 0; i < MAX_OBJETOS_3D; i++) {
+    for(int i = 0; i < MAX_OBJETOS_3D;i++) {
         objetos[i].modeloCarregado = true;
         objetos[i].vertices = objetos[0].vertices;
         objetos[i].indices = objetos[0].indices;
         objetos[i].ativo = false;
     }
-    
-    cout << "Modelo carregado com sucesso para todos os objetos" << endl;
+
 }
 
 // **********************************************************************
@@ -429,19 +425,84 @@ void DesenhaPredio(float altura, int cor)
 }
 
 void DesenhaCarro() {
-    glPushMatrix();
-    posicionaCarro();
-    
+  /*   posicionaCarro();
     if (!ModoDeProjecao) return;
     
-    // Usa uma escala muito menor para o modelo TRI (que tem coordenadas grandes)
-    glScalef(0.001, 0.001, 0.001);
+    // Diminui o tamanho do carro para 0.2
+    glScalef(0.2, 0.2, 0.2);
     
-    // Inicializa e desenha o objeto 3D
-    objetos[0].inicializar(0, 0, 0); // Posição relativa ao carro
-    objetos[0].desenhar();
-    
+    // Carro centralizado - o centro está em (0,0,0)
+    // Corpo principal do carro
+    glPushMatrix();
+        defineCor(Red);
+        // Corpo principal: 4x2x6 unidades, centralizado
+        glScalef(4.0, 2.0, 6.0);
+        glutSolidCube(1.0);
     glPopMatrix();
+    
+    // Teto do carro (mais baixo)
+    glPushMatrix();
+        defineCor(Red);
+        glTranslatef(0, 1.5, 0);
+        glScalef(3.0, 1.0, 4.0);
+        glutSolidCube(1.0);
+    glPopMatrix();
+    
+    // Rodas - posicionadas nos cantos
+    defineCor(Black);
+    
+    // Roda dianteira esquerda
+    glPushMatrix();
+        glTranslatef(-1.5, 0.5, -2.5);
+        glRotatef(90, 0, 1, 0);
+        glutSolidTorus(0.3, 0.8, 16, 8);
+    glPopMatrix();
+    
+    // Roda dianteira direita
+    glPushMatrix();
+        glTranslatef(1.5, 0.5, -2.5);
+        glRotatef(90, 0, 1, 0);
+        glutSolidTorus(0.3, 0.8, 16, 8);
+    glPopMatrix();
+    
+    // Roda traseira esquerda
+    glPushMatrix();
+        glTranslatef(-1.5, 0.5, 2.5);
+        glRotatef(90, 0, 1, 0);
+        glutSolidTorus(0.3, 0.8, 16, 8);
+    glPopMatrix();
+    
+    // Roda traseira direita
+    glPushMatrix();
+        glTranslatef(1.5, 0.5, 2.5);
+        glRotatef(90, 0, 1, 0);
+        glutSolidTorus(0.3, 0.8, 16, 8);
+    glPopMatrix();
+    
+    // Faróis
+    defineCor(Yellow);
+    
+    // Farol esquerdo
+    glPushMatrix();
+        glTranslatef(-1.0, 0.5, -3.0);
+        glScalef(0.3, 0.3, 0.1);
+        glutSolidSphere(1.0, 8, 8);
+    glPopMatrix();
+    
+    // Farol direito
+    glPushMatrix();
+        glTranslatef(1.0, 0.5, -3.0);
+        glScalef(0.3, 0.3, 0.1);
+        glutSolidSphere(1.0, 8, 8);
+    glPopMatrix(); */
+    
+    glPushMatrix();
+           //DesenhaPredio(20, Green);
+            glScalef(10.5f, 5, 10.5f);
+           objetos[0].inicializar(2.5f ,2.5f, 0);
+           objetos[0].desenhar();
+    glPopMatrix();
+
 }
 
 
@@ -738,38 +799,27 @@ void DesenhaEm2D()
 // **********************************************************************
 void display( void )
 {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glMatrixMode(GL_MODELVIEW);
 
+
     glLineWidth(2);
+	
+	PosicUser();
+	glMatrixMode(GL_MODELVIEW);
     
-    PosicUser();
-    glMatrixMode(GL_MODELVIEW);
-    
-    // Desenha a cidade
-    DesenhaCidade(QtdX, QtdZ);
-    
-    // Desenha o carro
+    //DesenhaCidade(QtdX,QtdZ);
     DesenhaCarro();    
-    
-    // Desenha outros objetos 3D
-    glPushMatrix();
-    glTranslatef(-15, 0, 15);
-    glScalef(0.001, 0.001, 0.001); // Escala muito pequena para o modelo TRI
-    objetos[0].inicializar(0, 0, 0);
-    objetos[0].desenhar();
-    glPopMatrix();
-    
-    // Desenha um prédio de exemplo
-    glPushMatrix();
-    glTranslatef(15, 0, 15);
-    DesenhaPredio(20, Green);
-    glPopMatrix();
-    
     DefineLuz();
-    DesenhaEm2D();
+    //DesenhaEm2D();
     
-    glutSwapBuffers();
+	glutSwapBuffers();
+
+
+    objetos[0].inicializar(-15 ,15, 90);
+    objetos[0].desenhar();
+    DesenhaPredio(20, Green);
 }
 
 
