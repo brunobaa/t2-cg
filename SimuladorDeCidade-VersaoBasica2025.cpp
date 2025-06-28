@@ -42,6 +42,7 @@ double AccumDeltaT=0;
 #include "Ponto.h"
 #include "ListaDeCoresRGB.h"
 #include "Texture.h"
+#include "Objeto3D.h"
 
 GLfloat AnguloDeVisao=90;
 GLfloat AspectRatio, angulo=0;
@@ -89,6 +90,7 @@ public:
 #define COMBUSTIVEL 30
 #define VEICULO 40
 #define CALCADA 50
+#define MAX_OBJETOS_3D 100
 
 // Matriz que armazena informacoes sobre o que existe na cidade
 Elemento Cidade[30][30];
@@ -107,6 +109,8 @@ double consumoCombustivel = 3.0; // 3% por segundo
 int direcaoMovimento = 0; // 0: parado, 1: frente, -1: trás
 int direcaoRotacao = 0; // 0: sem rotação, 1: direita, -1: esquerda
 int ultimoX = 0, ultimoY = 0;
+Objeto3D objetos[MAX_OBJETOS_3D];
+
 
 // Declarações das funções
 bool lerTextureMapDoArquivo(const string& nomeArquivo, int& linhas, int& colunas);
@@ -160,6 +164,19 @@ bool posicaoValida(double x, double z) {
     
     // Permite movimento em qualquer lugar que não seja calçada
     return true;
+}
+
+void carregarObjetoTRI(const char* arquivo) {
+    if (!objetos[0].carregarTRI(arquivo)) {
+        return;
+    }
+    for(int i = 0; i < MAX_OBJETOS_3D;i++) {
+        objetos[i].modeloCarregado = true;
+        objetos[i].vertices = objetos[0].vertices;
+        objetos[i].indices = objetos[0].indices;
+        objetos[i].ativo = false;
+    }
+
 }
 
 // **********************************************************************
@@ -296,7 +313,8 @@ void init(void)
     
     AnguloDeVisao = 45;
     UseTexture (-1); // desabilita o uso de textura, inicialmente
-    
+
+    carregarObjetoTRI("Cow.tri");
 }
 // **********************************************************************
 //
@@ -386,8 +404,28 @@ void posicionaCarro() {
     glRotatef(anguloCarro, 0.0, 1.0, 0.0);
 }
 
+
+// **********************************************************************
+//  Desenha um predio no meio de uma c lula
+// **********************************************************************
+void DesenhaPredio(float altura, int cor)
+{
+    float fator = 0.5f;            // 50% da altura original
+    float h = altura * fator;      
+
+    defineCor(cor);
+    glPushMatrix();
+        // sobe metade de "h" para alinhar a base em y=0
+        glScalef(0.5f, h, 0.5f);
+        glTranslatef(0.0f, 0.5f, 0.0f);
+        // escala X,Z fixo; Y = h (já com o fator)
+        glutSolidCube(1);
+    glPopMatrix();
+    defineCor(White);
+}
+
 void DesenhaCarro() {
-    posicionaCarro();
+  /*   posicionaCarro();
     if (!ModoDeProjecao) return;
     
     // Diminui o tamanho do carro para 0.2
@@ -456,28 +494,17 @@ void DesenhaCarro() {
         glTranslatef(1.0, 0.5, -3.0);
         glScalef(0.3, 0.3, 0.1);
         glutSolidSphere(1.0, 8, 8);
-    glPopMatrix();
-}
-
-
-// **********************************************************************
-//  Desenha um predio no meio de uma c lula
-// **********************************************************************
-void DesenhaPredio(float altura, int cor)
-{
-    float fator = 0.5f;            // 50% da altura original
-    float h = altura * fator;      
-
-    defineCor(cor);
+    glPopMatrix(); */
+    
     glPushMatrix();
-        // sobe metade de "h" para alinhar a base em y=0
-        glScalef(0.5f, h, 0.5f);
-        glTranslatef(0.0f, 0.5f, 0.0f);
-        // escala X,Z fixo; Y = h (já com o fator)
-        glutSolidCube(1);
+           //DesenhaPredio(20, Green);
+            glScalef(10.5f, 5, 10.5f);
+           objetos[0].inicializar(2.5f ,2.5f, 0);
+           objetos[0].desenhar();
     glPopMatrix();
-    defineCor(White);
+
 }
+
 
 // **********************************************************************
 // void DesenhaLadrilhoTex(int idTextura)
@@ -782,13 +809,17 @@ void display( void )
 	PosicUser();
 	glMatrixMode(GL_MODELVIEW);
     
-    DesenhaCidade(QtdX,QtdZ);
+    //DesenhaCidade(QtdX,QtdZ);
     DesenhaCarro();    
     DefineLuz();
-    DesenhaEm2D();
-
-    defineCor(Green);
+    //DesenhaEm2D();
+    
 	glutSwapBuffers();
+
+
+    objetos[0].inicializar(-15 ,15, 90);
+    objetos[0].desenhar();
+    DesenhaPredio(20, Green);
 }
 
 

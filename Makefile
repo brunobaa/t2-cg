@@ -3,7 +3,7 @@
 PROG = BasicoOpenGL
 #FONTES = Linha.cpp Ponto.cpp InterseccaoEntreTodasAsLinhas.cpp Temporizador.cpp
 #FONTES = Ponto.cpp Poligono.cpp Temporizador.cpp ListaDeCoresRGB.cpp ProgramaBasicoOpenGL.cpp 
-FONTES = SimuladorDeCidade-VersaoBasica2025.cpp Ponto.cpp ImageClass.cpp Texture.cpp Temporizador.cpp ListaDeCoresRGB.cpp SOIL/SOIL.cpp SOIL/image_DXT.cpp SOIL/image_helper.cpp SOIL/stb_image_aug.cpp
+FONTES = SimuladorDeCidade-VersaoBasica2025.cpp Ponto.cpp Objeto3D.cpp ImageClass.cpp Texture.cpp Temporizador.cpp ListaDeCoresRGB.cpp SOIL/SOIL.cpp SOIL/image_DXT.cpp SOIL/image_helper.cpp SOIL/stb_image_aug.cpp
 
 #FONTES = Ponto.cpp Poligono.cpp Temporizador.cpp ListaDeCoresRGB.cpp ProgramaDeModelagem3D.cpp
 
