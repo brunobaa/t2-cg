@@ -13,35 +13,33 @@
 
 Objeto3D::Objeto3D() {
     rotacao = 0.0f;
-    modeloCarregado = false;
-    cor = Green;
+    cor = Green; // cor padrão em destaque
 }
 
-void Objeto3D::desenhar() {
+void Objeto3D::renderizar() {
     glPushMatrix();
         glScalef(escala, escala, escala); // Escala em cubo
         glRotatef(rotacao, 0, 1, 0);
         defineCor(cor);
         
-        if (modeloCarregado && !vertices.empty()) {
+        if (!vertices.empty()) {
             glBegin(GL_TRIANGLES);
                 for (size_t i = 0; i < indices.size(); i += 3) {
                     if (i + 2 < indices.size()) {
-                        Ponto& v1 = vertices[indices[i]];
-                        Ponto& v2 = vertices[indices[i + 1]];
-                        Ponto& v3 = vertices[indices[i + 2]];
+                        Ponto& p1 = vertices[indices[i]];
+                        Ponto& p2 = vertices[indices[i + 1]];
+                        Ponto& p3 = vertices[indices[i + 2]];
                         
-                        // Calcular normal para iluminação usando ProdVetorial
-                        Ponto edge1 = v2 - v1;
-                        Ponto edge2 = v3 - v1;
+                        Ponto borda1 = p2 - p1;
+                        Ponto borda2 = p3 - p1;
                         Ponto normal;
-                        ProdVetorial(edge1, edge2, normal);
-                        normal.versor(); // Normalizar o vetor
+                        ProdVetorial(borda1, borda2, normal);
+                        normal.versor(); // normaliza
                         
                         glNormal3f(normal.x, normal.y, normal.z);
-                        glVertex3f(v1.x, v1.y, v1.z);
-                        glVertex3f(v2.x, v2.y, v2.z);
-                        glVertex3f(v3.x, v3.y, v3.z);
+                        glVertex3f(p1.x, p1.y, p1.z);
+                        glVertex3f(p2.x, p2.y, p2.z);
+                        glVertex3f(p3.x, p3.y, p3.z);
                     }
                 }
             glEnd();
@@ -55,7 +53,7 @@ void Objeto3D::desenhar() {
     glPopMatrix();
 }
 
-bool Objeto3D::carregarTRI(const char* arquivo) {
+bool Objeto3D::lerObjetoTRI(const char* arquivo) {
     std::ifstream file(arquivo);
     if (!file.is_open()) {
         std::cout << "Erro ao abrir o arquivo modelo: " << arquivo << std::endl;
@@ -93,14 +91,5 @@ bool Objeto3D::carregarTRI(const char* arquivo) {
     }
     
     file.close();
-    
-    if (vertices.empty()) {
-        std::cout << "Erro: não foram encontrados triangulos no arquivo " << arquivo << std::endl;
-        return false;
-    }
-    
-    modeloCarregado = true;
-    std::cout << "Modelo carregado com sucesso! " << vertices.size() << " vértices, " 
-              << indices.size() << " índices, " << triangulosLidos << " triângulos" << std::endl;
     return true;
 }

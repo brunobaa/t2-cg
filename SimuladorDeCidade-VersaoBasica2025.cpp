@@ -170,8 +170,7 @@ bool posicaoValida(double x, double z) {
 
 
 void carregarObjetosTRI() {
-    if (vaca.carregarTRI("Cow.tri")){
-        vaca.modeloCarregado = true;
+    if (vaca.lerObjetoTRI("Cow.tri")){
         vaca.escala = 0.003f;
         vaca.rotacao = 90;
         vaca.cor = White;
@@ -179,8 +178,7 @@ void carregarObjetosTRI() {
         cout << "Erro ao carregar o objeto vaca" << endl;
     }
 
-    if (dog.carregarTRI("dog.tri")){
-        dog.modeloCarregado = true;
+    if (dog.lerObjetoTRI("dog.tri")){
         dog.escala = 0.1;
         dog.cor = Red;
         dog.rotacao = 90;
@@ -188,27 +186,24 @@ void carregarObjetosTRI() {
         cout << "Erro ao carregar o objeto dog" << endl;
     }
 
-    if (cactus.carregarTRI("cactus.tri")) {
-        cactus.modeloCarregado = true;
+    if (cactus.lerObjetoTRI("cactus.tri")) {
         cactus.escala = 0.2;
         cactus.cor = GreenYellow;
     } else {
         cout << "Erro ao carregar o objeto cactus" << endl;
     }
 
-    if (arvore.carregarTRI("tree.tri")) {
-        arvore.modeloCarregado = true;
+    if (arvore.lerObjetoTRI("tree.tri")) {
         arvore.escala = 0.4;
         arvore.cor = GreenCopper;
     } else {
         cout << "Erro ao carregar o objeto arvore" << endl;
     }
     
-    if (veiculo.carregarTRI("moto_2.tri")) {
-        veiculo.modeloCarregado = true;
+    if (veiculo.lerObjetoTRI("ferrari.tri")) {
         veiculo.escala = 0.2;
         veiculo.cor = SkyBlue;
-        veiculo.rotacao = 90;
+        veiculo.rotacao = -90;
         usarVeiculoPadrao = false;
     } else {
         cout << "Erro ao carregar o objeto veiculo" << endl;
@@ -499,7 +494,7 @@ void DesenhaCarro() {
         glPopMatrix(); 
     }
 
-    veiculo.desenhar();
+    veiculo.renderizar();
 }
 
 
@@ -582,50 +577,26 @@ void desenhaGasolina() {
 
 void desenhaVaca() {
     glPushMatrix();
-        vaca.desenhar();
+        vaca.renderizar();
     glPopMatrix();
 }
 
 void desenhaCactus() {
     glPushMatrix();
-        cactus.desenhar();
+        cactus.renderizar();
     glPopMatrix();
 }
 
 void desenhaDog() {
     glPushMatrix();
-        dog.desenhar();
+        dog.renderizar();
     glPopMatrix();
 }
 
 void desenhaArvore() {
     glPushMatrix();
-        arvore.desenhar();
+        arvore.renderizar();
     glPopMatrix();
-}
-
-
-void desenhaObstaculo(int indice) {
-    if (indice % 4 == 0) {
-        desenhaDog();
-        return;
-    }
-
-    if (indice % 5 == 0) {
-        desenhaCactus();
-        return;
-    }
-
-    if (indice % 7 == 0) {
-        desenhaVaca();
-        return;
-    }
-
-    if (indice % 3 == 0) {
-        desenhaArvore();
-        return;
-    }
-
 }
 
 void DesenhaCidade(int QtdX, int QtdZ) {
@@ -662,7 +633,6 @@ void DesenhaCidade(int QtdX, int QtdZ) {
                 desenhaVaca();
                 DesenhaLadrilhoTEX(12); // coloca o chão como vermelho
             } else {
-               // desenhaObstaculo(z);
                 DesenhaLadrilhoTEX(Cidade[x][z].textureID);
             }
 

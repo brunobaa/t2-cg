@@ -13,11 +13,10 @@ public:
     // MOdelagem 3D
     std::vector<Ponto> vertices;
     std::vector<int> indices;
-    bool modeloCarregado;
     
     Objeto3D();
-    void desenhar();
-    bool carregarTRI(const char* arquivo);
+    void renderizar();
+    bool lerObjetoTRI(const char* arquivo);
 };
 
 #endif 
