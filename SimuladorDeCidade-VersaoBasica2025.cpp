@@ -110,7 +110,6 @@ bool usarVeiculoPadrao = true;
 double velocidade = 3.0; // 3 m/s
 double combustivel = 100.0; // 100% inicial
 double consumoCombustivel = 3.0; // 3% por segundo
-int direcaoMovimento = 0; // 0: parado, 1: frente, -1: trás
 int direcaoRotacao = 0; // 0: sem rotação, 1: direita, -1: esquerda
 int ultimoX = 0, ultimoY = 0;
 Objeto3D vaca, cactus, veiculo, dog, arvore;
@@ -189,7 +188,7 @@ void carregarObjetosTRI() {
         cout << "Erro ao carregar o objeto dog" << endl;
     }
 
-    if (cactus.carregarTRI("cactus.tri")){
+    if (cactus.carregarTRI("cactus.tri")) {
         cactus.modeloCarregado = true;
         cactus.escala = 0.2;
         cactus.cor = GreenYellow;
@@ -197,7 +196,7 @@ void carregarObjetosTRI() {
         cout << "Erro ao carregar o objeto cactus" << endl;
     }
 
-    if (arvore.carregarTRI("tree.tri")){
+    if (arvore.carregarTRI("tree.tri")) {
         arvore.modeloCarregado = true;
         arvore.escala = 0.4;
         arvore.cor = GreenCopper;
@@ -205,7 +204,7 @@ void carregarObjetosTRI() {
         cout << "Erro ao carregar o objeto arvore" << endl;
     }
     
-    if (veiculo.carregarTRI("moto.tri")){
+    if (veiculo.carregarTRI("moto_2.tri")) {
         veiculo.modeloCarregado = true;
         veiculo.escala = 0.2;
         veiculo.cor = SkyBlue;
@@ -394,7 +393,6 @@ void animate() {
                 // Para o carro se combustível chegar a 0
                 if (combustivel <= 0) {
                     combustivel = 0;
-                    direcaoMovimento = 0;
                     direcaoRotacao = 0;
                     percorrer = false;
                     cout << "Combustível esgotado! Carro parado." << endl;
@@ -402,11 +400,7 @@ void animate() {
         
         
         // Rotação do carro
-        if (direcaoRotacao != 0) {
-            anguloCarro += direcaoRotacao * 90.0 * dt; // 90 graus por segundo
-            if (anguloCarro >= 360) anguloCarro -= 360;
-            if (anguloCarro < 0) anguloCarro += 360;
-        }
+        anguloCarro += direcaoRotacao * 90.0 * dt;
     }
 
     if (AccumDeltaT > 1.0/30) {
@@ -434,7 +428,7 @@ void posicionaCarro() {
 void DesenhaCarro() {
     posicionaCarro();
     if (!ModoDeProjecao) return;
-    if (true) {
+    if (usarVeiculoPadrao) {
 
         // Diminui o tamanho do carro para 0.2
         glScalef(0.2, 0.2, 0.2);
@@ -915,12 +909,6 @@ void processarSetas(int tecla) {
         case GLUT_KEY_RIGHT:
             direcaoRotacao = 1;
             break;
-        case GLUT_KEY_UP:
-            direcaoMovimento = 1;
-            break;
-        case GLUT_KEY_DOWN:
-            direcaoMovimento = -1;
-            break;
     }
 }
 
@@ -930,10 +918,6 @@ void pararMovimento(int tecla) {
         case GLUT_KEY_LEFT:
         case GLUT_KEY_RIGHT:
             direcaoRotacao = 0;
-            break;
-        case GLUT_KEY_UP:
-        case GLUT_KEY_DOWN:
-            direcaoMovimento = 0;
             break;
     }
 }
@@ -1015,11 +999,7 @@ void keyboard ( unsigned char key, int x, int y )
     case 32:
         percorrer = !percorrer;
         if (percorrer) {
-            // Quando começar a percorrer, define movimento para frente
-            direcaoMovimento = 1;
         } else {
-            // Quando parar, zera todas as direções
-            direcaoMovimento = 0;
             direcaoRotacao = 0;
         }
         break;       
